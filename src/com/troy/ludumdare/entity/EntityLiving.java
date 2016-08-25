@@ -6,13 +6,16 @@ import com.troy.troyberry.math.*;
 
 /** This class represents a living entity witch has health **/
 public abstract class EntityLiving extends Entity {
-
+	
+	WalkingSprite walkingSprite;
+	
 	/** This entity's health **/
 	private float health;
 	private boolean dead;
 
-	public EntityLiving(int x, int y, Sprite sprite, float health) {
-		super(x, y, sprite);
+	public EntityLiving(int x, int y, WalkingSprite sprite, float health) {
+		super(x, y, sprite.getBasicSprite());
+		this.walkingSprite = sprite;
 		this.health = health;
 		this.dead = false;
 	}
@@ -20,7 +23,7 @@ public abstract class EntityLiving extends Entity {
 	/** Called when this entity is killed **/
 	public abstract void onDeath();
 
-	public abstract void update(World world);
+	public abstract void update(World world, int updateCount);
 
 	public void render(Screen screen, World world) {
 		if (this.isAlive()) {
@@ -39,10 +42,11 @@ public abstract class EntityLiving extends Entity {
 	}
 
 	/** Kills this entity  **/
-	public void kill() {
+	public void kill(World world) {
 		if (dead) return;
 		this.health = 0f;
 		this.dead = true;
+		world.removeEntity(this);
 		this.onDeath();
 	}
 

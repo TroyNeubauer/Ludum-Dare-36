@@ -101,7 +101,7 @@ public class Game extends Canvas {
 		running = true;
 
 		double timePerTick = 1000000000d / 60d;
-		int updateCount = 0;
+		int updateCount = 1;
 
 		int frameUpdatesPerSecond = 15;
 		boolean firstFrameRun = true;
@@ -176,8 +176,7 @@ public class Game extends Canvas {
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowFocusListener(windowHandler);
 		frame.addWindowListener(windowHandler);
-
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/textures/icon.png")));
 
 		frame.pack();
 		frame.setVisible(true);

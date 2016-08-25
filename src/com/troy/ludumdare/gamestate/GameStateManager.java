@@ -10,22 +10,24 @@ public class GameStateManager {
 	private GameState currentState;
 	private Game game;
 	
-	public GameStateManager(GameState currentState, Game game) {
+	public GameStateManager(GameState currentState, Game game) throws Exception {
 		currentState.onStart(game);
 		this.currentState = currentState;
 		this.game = game;
 
 	}
 	
-	/** Sets the game state to another state **/
-	public void setState(GameState newState) {
+	/** Sets the game state to another state 
+	 * @throws Exception **/
+	public void setState(GameState newState) throws Exception {
 		currentState.onEnd(game);
 		newState.onStart(game);
 		currentState = newState;
 	}
 	
-	/** Called to update the current game state **/
-	public void update(Game game, int updateCount) {
+	/** Called to update the current game state 
+	 * @throws Exception **/
+	public void update(Game game, int updateCount) throws Exception {
 		currentState.update(game, updateCount);
 	}
 	

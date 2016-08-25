@@ -5,11 +5,13 @@ import com.troy.ludumdare.graphics.*;
 
 public abstract class GameState {
 	
-	/** Called to update the game state **/
-	public abstract void update(Game game, int updateCount);
+	/** Called to update the game state 
+	 * @throws Exception **/
+	public abstract void update(Game game, int updateCount) throws Exception;
 	
-	/** Called when this game state becomes the current game state **/
-	public abstract void onStart(Game game);
+	/** Called when this game state becomes the current game state 
+	 * @throws Exception **/
+	public abstract void onStart(Game game) throws Exception;
 	
 	/** Called when this state is no longer the current game state **/
 	public abstract void onEnd(Game game);

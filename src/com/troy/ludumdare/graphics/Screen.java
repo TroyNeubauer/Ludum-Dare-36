@@ -31,8 +31,7 @@ public class Screen {
 		}
 		this.g = g;
 	}
-
-	/** Draws a sprite onto the screen **/
+	
 	public void drawSprite(Sprite sprite, int spriteX, int spriteY, World world) {
 		int spriteWidthMinus1 = sprite.width - 1;
 		for(int y = 0; y < sprite.width; y++){
@@ -46,5 +45,35 @@ public class Screen {
 				pixels[xp + (yp * width)] = color;
 			}
 		}
+	}
+
+	/** Draws a sprite onto the screen 
+	 * @param color2 
+	 * @param i **/
+	public void drawSprite(Sprite sprite, int spriteX, int spriteY, World world, int detecColor, int setColor) {
+		int spriteWidthMinus1 = sprite.width - 1;
+		for(int y = 0; y < sprite.width; y++){
+			int yp = y - Math.round(world.yOffset) + spriteY;
+			if(yp < 0 || yp >= height)continue;
+			for(int x = 0; x < sprite.width; x++){
+				int xp = x - Math.round(world.xOffset) + spriteX;
+				if(xp < 0 || xp >= width)continue;
+				int color = sprite.pixels[(x & spriteWidthMinus1) + (y & spriteWidthMinus1) * sprite.width];
+				if(color == 0xffff00ff)continue;
+				if(color == detecColor) color = setColor;
+				pixels[xp + (yp * width)] = color;
+			}
+		}
+	}
+
+	public void drawPixel(int location, int color) {
+		if(location < 0 || location >= (this.width * this.height))return;
+		pixels[location] = color;
+	}
+	
+	public void drawString(Font font, String string, int x, int y){
+		g.setColor(Color.black);
+		g.setFont(font);
+		g.drawString(string, x, y);
 	}
 }

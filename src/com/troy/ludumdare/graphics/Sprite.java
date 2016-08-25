@@ -30,8 +30,8 @@ public class Sprite {
 	public Sprite(SpriteSheet spriteSheet) throws Exception {
 		this(0, 0, spriteSheet.width, spriteSheet.height, spriteSheet);
 	}
-	
-	public Sprite(int x, int y, int width, int height, int[] pixels){
+
+	public Sprite(int x, int y, int width, int height, int[] pixels) {
 		this.width = width;
 		this.height = height;
 
@@ -48,5 +48,14 @@ public class Sprite {
 				pixels[x + y * width] = spriteSheet.pixels[(x + this.x) + (y + this.y) * spriteSheet.width];
 			}
 		}
+	}
+
+	public Sprite changeColor(int selectColor, int newColor) {
+		for (int i = 0; i < pixels.length; i++) {
+			if (pixels[i] == selectColor) {
+				pixels[i] = newColor;
+			}
+		}
+		return this;
 	}
 }

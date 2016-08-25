@@ -6,8 +6,9 @@ import com.troy.ludumdare.graphics.*;
 public class Assets {
 
 	public static SpriteSheet spriteSheet;
-	public static Sprite tile_1, tile_2, tile_3, tile_4, nullTile;
-	public static AnimatedSprite player, fire, explosion;
+	public static Sprite tile_1, tile_2, tile_3, tile_4, nullTile, windowIcon;
+	public static AnimatedSprite fire, explosion;
+	public static WalkingSprite player, attacker;
 	
 	private static boolean hasBeenLoaded = false;
 	
@@ -24,10 +25,13 @@ public class Assets {
 		tile_2 = new Sprite(32, 0, 16, 16, spriteSheet);
 		tile_3 = new Sprite(48, 0, 16, 16, spriteSheet);
 		tile_4 = new Sprite(64, 0, 16, 16, spriteSheet);
+		windowIcon = new Sprite(0, 128, 64, 64, spriteSheet);
 		
 		fire = new AnimatedSprite(0, 32, 16, 16, 8, spriteSheet, 200);
 		explosion = new AnimatedSprite(0, 48, 16, 16, 32, spriteSheet, 50);
-		player = new AnimatedSprite(0, 16, 16, 16, 8, spriteSheet, 400);
+		
+		player = new WalkingSprite(0, 64, 16, 16, spriteSheet, 300);
+		attacker = new WalkingSprite(0, 64, 16, 16, spriteSheet, 250);
 	}
 
 	private Assets() {

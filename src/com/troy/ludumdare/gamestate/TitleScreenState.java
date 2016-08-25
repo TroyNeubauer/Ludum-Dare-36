@@ -9,7 +9,7 @@ import com.troy.ludumdare.input.*;
 public class TitleScreenState extends GameState {
 
 	@Override
-	public void update(Game game, int updateCount) {
+	public void update(Game game, int updateCount) throws Exception {
 		if (Controls.PLAY.hasBeenPressed()) {
 			game.gameStateManager.setState(game.levelState);
 		}

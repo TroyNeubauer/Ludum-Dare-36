@@ -7,7 +7,7 @@ import com.troy.ludumdare.world.*;
 public abstract class Tile {
 
 	/** The size of a tile **/
-	public static final int WIDTH = 16, HEIGHT = 16;
+	public static final int SIZE = 16;
 
 	/** The number used to identify a tile **/
 	public final int id;
@@ -16,14 +16,14 @@ public abstract class Tile {
 	public final Sprite sprite;
 
 	/** Weather or not the tile can be collided with **/
-	private boolean isSolid;
+	protected final boolean isSolid;
 
-	public static final Tile BASIC_TILE_1 = new BasicTile(1, Assets.tile_1, false), BASIC_TILE_2 = new BasicTile(2, Assets.tile_2, false),
-		BASIC_TILE_3 = new BasicTile(3, Assets.tile_3, false), BASIC_TILE_4 = new BasicTile(4, Assets.tile_4, false),
-		NULL_TILE = new BasicTile(-1, Assets.nullTile, false);
+	public static final BasicTile BASIC_TILE_1 = new BasicTile(1, Assets.tile_1, false), BASIC_TILE_2 = new BasicTile(2, Assets.tile_2, true),
+		BASIC_TILE_3 = new BasicTile(3, Assets.tile_3, true), BASIC_TILE_4 = new BasicTile(4, Assets.tile_4, true),
+		NULL_TILE = new BasicTile(-1, Assets.nullTile, true);
 	
-	public static final AnimatedTile FIRE_TILE = new AnimatedTile(5, Assets.fire, false), 
-		EXPLOSION_TILE = new AnimatedTile(6, Assets.explosion, false);
+	public static final AnimatedTile FIRE_TILE = new AnimatedTile(5, Assets.fire, false, Assets.tile_1), 
+		EXPLOSION_TILE = new AnimatedTile(6, Assets.explosion, false, Assets.tile_1);
 
 	public Tile(int id, Sprite sprite, boolean isSolid) {
 		this.id = id;
