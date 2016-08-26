@@ -23,10 +23,9 @@ public class EntityPlayer extends EntityLiving {
 		if (Controls.RIGHT.isPressed()) xx += 1;
 		this.walkingSprite.update(updateCount, new Vector2i(xx, yy));
 
-		velocity = world.checkCollision(getPosition(), getPosition(), getEntitySize(), xx, yy, this);
+		velocity = world.checkCollision(xx, yy, this);
 		xx = velocity.x;
 		yy = velocity.y;
-		
 		x += xx;
 		y += yy;
 	}

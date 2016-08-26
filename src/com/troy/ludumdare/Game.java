@@ -22,9 +22,9 @@ public class Game extends Canvas {
 
 	public JFrame frame;
 
-	public int width = 300, height = (int)(width / 16f * 9f);
+	public int width = 300, height = (int) (width / 16f * 9f);
 	public int windowWidth = width * 4, windowHeight = height * 4;
-	
+
 	private BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 	private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
@@ -65,10 +65,14 @@ public class Game extends Canvas {
 		g.dispose();
 	}
 
+	public static void deserializationTest() {
+		
+	}
+
 	public static void main(String[] args) throws Exception {
 		Thread.currentThread().setName("Game-Thread");
 		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-
+		deserializationTest();
 		try {
 			game = new Game(args);
 		} catch (Exception e) {
@@ -95,9 +99,9 @@ public class Game extends Canvas {
 			crashReport = new CrashReport("Loading Textures", e).print();
 		}
 	}
-	
+
 	public void loop() throws Exception {
-		
+
 		running = true;
 
 		double timePerTick = 1000000000d / 60d;
@@ -130,24 +134,24 @@ public class Game extends Canvas {
 				delta--;
 			}
 			if (updateTimer >= 1000000000) {
-				
+
 				currentUpdatesAverage = updates;
 				updates = 0;
 				updateTimer = 0;
 			}
 
 			if (frameTimer >= (1000000000L / (long) frameUpdatesPerSecond)) {
-				
+
 				for (int i = pastFewFPS.length - 1; i > 0; i--) {
 					pastFewFPS[i] = pastFewFPS[i - 1];
 				}
 				pastFewFPS[0] = frames;
-				
-				currentFramesAverage = Math.round(Maths.average(pastFewFPS)  * ((float)frameUpdatesPerSecond));
+
+				currentFramesAverage = Math.round(Maths.average(pastFewFPS) * ((float) frameUpdatesPerSecond));
 				frames = 0;
 				frameTimer = 0;
 			}
-			
+
 			this.frame.setTitle(Version.getWindowTitle() + "  |  " + currentUpdatesAverage + " ups, " + currentFramesAverage + " fps");
 			render();
 			frames++;
@@ -155,6 +159,7 @@ public class Game extends Canvas {
 		}
 		frame.setVisible(false);
 		frame.dispose();
+		LevelState.save();
 		if (crashReport == null) {
 			Log.info(Version.getWindowTitle() + " completed successfully!");
 		}

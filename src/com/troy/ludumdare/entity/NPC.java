@@ -8,7 +8,7 @@ import com.troy.troyberry.math.*;
 
 public abstract class NPC extends EntityLiving {
 
-	protected Vector2i nextLocation;
+	protected Vector2i nextLocation, desiredLocation;
 
 	protected List<Node> pathFindInstructions;
 
