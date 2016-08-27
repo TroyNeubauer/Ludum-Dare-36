@@ -7,13 +7,13 @@ import com.troy.ludumdare.tile.*;
 import com.troy.ludumdare.world.*;
 import com.troy.troyberry.math.*;
 
-public class Attacker extends NPC {
+public class Minion extends NPC {
 
 	private Random random;
 	private int color;
 	private final int updateTime;
 
-	public Attacker(int x, int y, WalkingSprite attacker, float health, Vector2i velocity) {
+	public Minion(int x, int y, WalkingSprite attacker, float health, Vector2i velocity) {
 		super(x, y, attacker, health, velocity);
 		random = new Random();
 		this.color = 0xFF + random.nextInt(255) + random.nextInt(255) + random.nextInt(255);
@@ -68,7 +68,7 @@ public class Attacker extends NPC {
 	}
 
 	private void getCloseToPlayer(World world) {
-		EntityPlayer player = world.getPlayer();
+		EntityPlayer player = LevelState.player;
 		if (player == null || nextLocation == null || desiredLocation == null) return;
 		if (new Vector2i((nextLocation.x + Tile.SIZE / 2) / Tile.SIZE, (nextLocation.y + Tile.SIZE / 2) / Tile.SIZE)
 			.equals(new Vector2i((desiredLocation.x + Tile.SIZE / 2) / Tile.SIZE, (desiredLocation.y + Tile.SIZE / 2) / Tile.SIZE))) {
@@ -78,7 +78,7 @@ public class Attacker extends NPC {
 	}
 
 	private void updateTarget(World world) {
-		EntityPlayer player = world.getPlayer();
+		EntityPlayer player = LevelState.player;
 		if (player == null) return;
 		Vector2i goal = new Vector2i(player.x / Tile.SIZE, player.y / Tile.SIZE);
 		Vector2i start = new Vector2i(x / Tile.SIZE, y / Tile.SIZE);

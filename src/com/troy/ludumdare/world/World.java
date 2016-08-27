@@ -1,25 +1,24 @@
 package com.troy.ludumdare.world;
 
-import java.awt.Font;
-import java.io.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import com.troy.ludumdare.*;
 import com.troy.ludumdare.entity.*;
-import com.troy.ludumdare.gamestate.*;
 import com.troy.ludumdare.graphics.*;
 import com.troy.ludumdare.tile.*;
 import com.troy.ludumdare.util.*;
 import com.troy.troyberry.math.*;
-import com.troy.troyberry.serialization.*;
 
 /** Represents the world **/
 public class World {
 
+	int year = -64000;
 	Font entityFont = new Font("Times New Roman", Font.BOLD, 30);
 	/** Size of the world in tiles **/
 	private int width, height;
-	public int playerX = 32, playerY = 32;
-	
+	public int playerX = 16 * 30, playerY = 16 * 30;
+
 	private List<Integer> entitiesToRemove = new ArrayList<Integer>();
 
 	/** An array of all the tile id's **/
@@ -52,62 +51,6 @@ public class World {
 
 	private static Random random = new Random();
 
-	public World(WorldStats worldStats) {
-		this.width = (short) worldStats.width;
-		this.height = (short) worldStats.height;
-		this.tiles = new byte[width * height];
-		entities = new ArrayList<Entity>();
-		for (int i = 0; i < width * height; i++) {
-			tiles[i] = 1;
-			if (random.nextInt(3) == 0) {
-				tiles[i] = (byte) (random.nextInt(4) + 1);
-				if (random.nextInt(4) + 1 == 1) {
-					if (random.nextBoolean()) {
-						tiles[i] = 5;
-					} else {
-						tiles[i] = 6;
-					}
-				}
-			} else {
-				tiles[i] = 1;
-			}
-		}
-		tiles[0] = 1;
-		this.xOffset = 0;
-		this.yOffset = 0;
-
-	}
-	
-	public World() throws Exception {
-		TBDatabase database = TBDatabase.DeserializeFromFile(LevelState.SAVE_DIRECTORY);
-		int fileWidth = 10, fileHeight = 10;
-		byte[] tempTiles = null;
-		for (TBObject object : database.objects) {
-			for (TBField field : object.fields)
-				if (field.getName().equalsIgnoreCase("Width")) fileWidth = field.getInt();
-
-				else if (field.getName().equalsIgnoreCase("Height")) fileHeight = field.getInt();
-			
-				else if (field.getName().equalsIgnoreCase("PlayerX")) playerX = field.getInt();
-			
-				else if (field.getName().equalsIgnoreCase("PlayerY")) playerY = field.getInt();
-
-			for (TBArray array : object.arrays)
-				if (array.getName().equalsIgnoreCase("WorldBlocks")) {
-					tempTiles = array.data;
-				}
-
-		}
-		
-		this.width = fileWidth;
-		this.height = fileWidth;
-		this.tiles = tempTiles;
-		entities = new ArrayList<Entity>();
-		this.xOffset = 0;
-		this.yOffset = 0;
-
-	}
-
 	public Vector2i checkCollision(int velX, int velY, Entity entity) {
 		Vector2i tileLocation = entity.getPosition(), entityPosition = entity.getPosition(), entitySize = entity.getEntitySize();
 		if (velX != 0 && velY != 0) {
@@ -137,7 +80,7 @@ public class World {
 		for (int y = 0; y < width; y++) {
 			for (int x = 0; x < height; x++) {
 				int index = x + y * width;
-				if(index < 0 || index >= tiles.length) continue;
+				if (index < 0 || index >= tiles.length) continue;
 				TileRegistry.getTile(tiles[index]).render(screen, x * Tile.SIZE, y * Tile.SIZE, this);
 			}
 		}
@@ -151,7 +94,7 @@ public class World {
 		for (int y = 0; y < width; y++) {
 			for (int x = 0; x < height; x++) {
 				int index = x + y * width;
-				if(index < 0 || index >= tiles.length) continue;
+				if (index < 0 || index >= tiles.length) continue;
 				TileRegistry.getTile(tiles[index]).update(updateCount);
 			}
 		}
@@ -210,8 +153,8 @@ public class World {
 
 		}
 		Node bestNode = current;
-		for(Node node : openList){
-			if(node.hCost < bestNode.hCost){
+		for (Node node : openList) {
+			if (node.hCost < bestNode.hCost) {
 				bestNode = node;
 			}
 		}
@@ -251,78 +194,43 @@ public class World {
 		return this;
 	}
 
-	/** Returns the amount of tiles in the world **/
-	public int getTileCount() {
-		return tiles.length;
+	public World(WorldStats worldStats) {
+		this.width = (short) worldStats.width;
+		this.height = (short) worldStats.height;
+		this.tiles = new byte[width * height];
+		entities = new ArrayList<Entity>();
+		for (int i = 0; i < width * height; i++) {
+			tiles[i] = 1;
+		}
+		int radius = 15;
+		int location = 20, loopCount = 200;
+		double angle = 0;
+		double slice = Math.PI * 2 / loopCount;
+		int x, y;
+		Vector2i center = new Vector2i(30, 30);
+
+		for (int i = 0; i < loopCount; i++) {
+			angle = i * slice;
+			for (int times = 15; times < 18; times++) {
+				x = Maths.round(center.x + Math.cos(angle) * times);
+				y = Maths.round(center.y + Math.sin(angle) * times);
+				tiles[x + y * this.width] = 2;
+			}
+		}
+		for(int i = 0; i < 20; i++){
+			tiles[(30 + 12 - random.nextInt(24)) + ( 30 + 12 - random.nextInt(24)) * this.width] = 3;
+		}
+		tiles[30 + 30 * this.width] = 1;
+		tiles[31 + 30 * this.width] = 1;
+		tiles[30 + 31 * this.width] = 1;
+		tiles[31 + 31 * this.width] = 1;
+		this.xOffset = 0;
+		this.yOffset = 0;
+
 	}
 
 	public void centerCameraOnPoint(int x, int y) {
-		xOffset = x -  Game.screen.width / 2;
-		yOffset =  y -  Game.screen.height / 2;
-	}
-
-	public EntityPlayer getPlayer() {
-		for (Entity e : entities)
-			if (e instanceof EntityPlayer) {
-				return (EntityPlayer) e;
-			}
-		return null;
-	}
-
-	public void spawnEntity(Class<Entity> value) {
-		if (value.equals(Attacker.class)) {
-			System.out.println("gonna spawn atacker");
-		}
-
-	}
-
-	public void spawnAttacker() throws Exception {
-		Vector2i tilePos = null;
-		do {
-			tilePos = new Vector2i(random.nextInt(width), random.nextInt(height));
-		} while (this.getTile(tilePos.x, tilePos.y).isSolid());
-
-		this.add(new Attacker(tilePos.x * Tile.SIZE, tilePos.y * Tile.SIZE, new WalkingSprite(Assets.attacker), 100, new Vector2i(0, 0)));
-
-	}
-
-	public void save() {
-
-		TBDatabase database = new TBDatabase("CompleteWorld");
-		TBObject object = new TBObject("World");
-
-		object.addField(TBField.Integer("Width", this.width));
-		object.addField(TBField.Integer("Height", this.height));
-		object.addField(TBField.Integer("PlayerX", LevelState.player.x));
-		object.addField(TBField.Integer("PlayerY", LevelState.player.y));
-		object.addArray(TBArray.Byte("WorldBlocks", this.tiles));
-		
-		System.out.println("Saving World Width: " + this.width + " World Height: " + this.height);
-		System.out.println("saving player X: " + LevelState.player.x + " Y: " + LevelState.player.y);
-
-		database.addObject(object);
-
-		File file = LevelState.SAVE_DIRECTORY;
-		byte[] data = new byte[database.getSize()];
-		database.getBytes(data, 0);
-		try {
-			if (file.exists()){
-				file.delete();
-				System.out.println("Deleting old world saves");
-			}
-
-			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
-			stream.write(data);
-			stream.close();
-			System.out.print("saving world file: " + file.getName());
-			if (file.exists()) 
-				System.out.println(" success!");
-			else
-				System.err.println(" failed!");
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	
+		xOffset = x - Game.screen.width / 2;
+		yOffset = y - Game.screen.height / 2;
 	}
 }
