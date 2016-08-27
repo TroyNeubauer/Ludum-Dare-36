@@ -9,6 +9,8 @@ public class Version {
 	/** some info about the version such as Alpha Beta or release **/
 	public static final String VERSION_INFO = "Alpha";
 	
+	public static final String NAME = "INSERT_NAME_HERE ";
+	
 	/** @return The complete version as a String **/
 	public static String getVersion() {
 		return VERSION_MAJOR + "." + VERSION_MINOR + "." + VERSION_PATCH + " " + VERSION_INFO;
@@ -16,6 +18,10 @@ public class Version {
 	
 	/** @return The title used for the window **/
 	public static String getWindowTitle(){
-		return "Ludum Dare 36 Game " + Version.getVersion();
+		return NAME + Version.getVersion();
+	}
+	
+	public static String getName(){
+		return NAME;
 	}
 }

@@ -25,7 +25,7 @@ public class World {
 	/** An array of all the tile id's **/
 	public byte[] tiles;
 
-	public float xOffset, yOffset;
+	public int xOffset, yOffset;
 
 	/** A list of all the entities in the world **/
 	public List<Entity> entities;
@@ -53,8 +53,8 @@ public class World {
 	private static Random random = new Random();
 
 	public World(WorldStats worldStats) {
-		this.width = worldStats.width;
-		this.height = worldStats.height;
+		this.width = (short) worldStats.width;
+		this.height = (short) worldStats.height;
 		this.tiles = new byte[width * height];
 		entities = new ArrayList<Entity>();
 		for (int i = 0; i < width * height; i++) {
@@ -73,8 +73,8 @@ public class World {
 			}
 		}
 		tiles[0] = 1;
-		this.xOffset = 0f;
-		this.yOffset = 0f;
+		this.xOffset = 0;
+		this.yOffset = 0;
 
 	}
 	
@@ -103,8 +103,8 @@ public class World {
 		this.height = fileWidth;
 		this.tiles = tempTiles;
 		entities = new ArrayList<Entity>();
-		this.xOffset = 0f;
-		this.yOffset = 0f;
+		this.xOffset = 0;
+		this.yOffset = 0;
 
 	}
 
@@ -187,16 +187,7 @@ public class World {
 			tryCount++;
 			current = openList.get(0);
 			if (current.pos.equals(finish)) {
-				List<Node> path = new ArrayList<Node>();
-				path.add(new Node(start, null, 0.0, 0.0));
-				while (current.parent != null) {
-					path.add(current);
-					current = current.parent;
-				}
-				openList.clear();
-				closedList.clear();
-
-				return path;
+				return retracePath(start, finish, current, openList, closedList);
 			}
 			openList.remove(current);
 			closedList.add(current);
@@ -218,9 +209,28 @@ public class World {
 			}
 
 		}
+		Node bestNode = current;
+		for(Node node : openList){
+			if(node.hCost < bestNode.hCost){
+				bestNode = node;
+			}
+		}
 		closedList.clear();
 		return null;
 
+	}
+
+	private List<Node> retracePath(Vector2i start, Vector2i finish, Node current, List<Node> openList, List<Node> closedList) {
+		List<Node> path = new ArrayList<Node>();
+		path.add(new Node(start, null, 0.0, 0.0));
+		while (current.parent != null) {
+			path.add(current);
+			current = current.parent;
+		}
+		openList.clear();
+		closedList.clear();
+
+		return path;
 	}
 
 	private boolean vecInList(List<Node> list, Vector2i vector) {
@@ -247,8 +257,8 @@ public class World {
 	}
 
 	public void centerCameraOnPoint(int x, int y) {
-		xOffset = (float) x - (float) Game.screen.width / 2f;
-		yOffset = (float) y - (float) Game.screen.height / 2f;
+		xOffset = x -  Game.screen.width / 2;
+		yOffset =  y -  Game.screen.height / 2;
 	}
 
 	public EntityPlayer getPlayer() {
@@ -269,7 +279,7 @@ public class World {
 	public void spawnAttacker() throws Exception {
 		Vector2i tilePos = null;
 		do {
-			tilePos = new Vector2i(random.nextInt(40), random.nextInt(40));
+			tilePos = new Vector2i(random.nextInt(width), random.nextInt(height));
 		} while (this.getTile(tilePos.x, tilePos.y).isSolid());
 
 		this.add(new Attacker(tilePos.x * Tile.SIZE, tilePos.y * Tile.SIZE, new WalkingSprite(Assets.attacker), 100, new Vector2i(0, 0)));
@@ -287,14 +297,10 @@ public class World {
 		object.addField(TBField.Integer("PlayerY", LevelState.player.y));
 		object.addArray(TBArray.Byte("WorldBlocks", this.tiles));
 		
-		System.out.println("Saving world Width: " + this.width + " Height: " + this.height);
+		System.out.println("Saving World Width: " + this.width + " World Height: " + this.height);
 		System.out.println("saving player X: " + LevelState.player.x + " Y: " + LevelState.player.y);
 
 		database.addObject(object);
-		for(int i = 0; i < this.width; i++){
-			System.out.print(tiles[i] + " ");
-		}
-		System.out.println();
 
 		File file = LevelState.SAVE_DIRECTORY;
 		byte[] data = new byte[database.getSize()];
@@ -317,6 +323,6 @@ public class World {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	
 	}
-
 }

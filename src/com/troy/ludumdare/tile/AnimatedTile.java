@@ -22,8 +22,8 @@ public class AnimatedTile extends Tile {
 
 	@Override
 	public void render(Screen screen, int x, int y, World world) {
-		if(backGroundSprite != null)screen.drawSprite(backGroundSprite, x, y, world);
-		screen.drawSprite(animatedSprite.getCurrentSprite(this.sprite), x, y, world);
+		if(backGroundSprite != null)screen.drawSprite(backGroundSprite, x, y, world, true);
+		screen.drawSprite(animatedSprite.getCurrentSprite(this.sprite), x, y, world, true);
 	}
 
 	@Override

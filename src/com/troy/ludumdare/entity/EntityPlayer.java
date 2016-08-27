@@ -17,10 +17,10 @@ public class EntityPlayer extends EntityLiving {
 		if (isDead()) return;
 		int xx = 0;
 		int yy = 0;
-		if (Controls.UP.isPressed()) yy -= 1;
-		if (Controls.DOWN.isPressed()) yy += 1;
-		if (Controls.LEFT.isPressed()) xx -= 1;
-		if (Controls.RIGHT.isPressed()) xx += 1;
+		if (Input.isKeyDown(Input.KEY_W)) yy -= 1;
+		if (Input.isKeyDown(Input.KEY_S)) yy += 1;
+		if (Input.isKeyDown(Input.KEY_A)) xx -= 1;
+		if (Input.isKeyDown(Input.KEY_D)) xx += 1;
 		this.walkingSprite.update(updateCount, new Vector2i(xx, yy));
 
 		velocity = world.checkCollision(xx, yy, this);
@@ -31,7 +31,7 @@ public class EntityPlayer extends EntityLiving {
 	}
 
 	public void render(Screen screen, World world) {
-		screen.drawSprite(this.walkingSprite.getCurrentSprite(), x, y, world);
+		screen.drawSprite(this.walkingSprite.getCurrentSprite(), x, y, world, true);
 
 	}
 

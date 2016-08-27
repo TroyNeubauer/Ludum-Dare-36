@@ -16,7 +16,7 @@ public class Screen {
 	public int clearColor = 0x000000;
 
 	/** The window's graphics context **/
-	private Graphics g;
+	public Graphics g;
 
 	public Screen(int width, int height) {
 		this.width = width;
@@ -32,17 +32,30 @@ public class Screen {
 		this.g = g;
 	}
 	
-	public void drawSprite(Sprite sprite, int spriteX, int spriteY, World world) {
+	public void drawSprite(Sprite sprite, int spriteX, int spriteY, World world, boolean inWorld) {
 		int spriteWidthMinus1 = sprite.width - 1;
 		for(int y = 0; y < sprite.width; y++){
-			int yp = y - Math.round(world.yOffset) + spriteY;
+			int yp = y - ((inWorld) ? world.yOffset : 0) + spriteY;
 			if(yp < 0 || yp >= height)continue;
 			for(int x = 0; x < sprite.width; x++){
-				int xp = x - Math.round(world.xOffset) + spriteX;
+				int xp = x - ((inWorld) ? world.xOffset : 0) + spriteX;
 				if(xp < 0 || xp >= width)continue;
 				int color = sprite.pixels[(x & spriteWidthMinus1) + (y & spriteWidthMinus1) * sprite.width];
 				if(color == 0xffff00ff)continue;
 				pixels[xp + (yp * width)] = color;
+			}
+		}
+	}
+	
+	public void drawRectangle(int recX, int recY, int width, int height, int color) {
+		
+		for(int y = 0; y < height; y++){
+			int yp = y + recY;
+			if(yp < 0 || yp >= this.height)continue;
+			for(int x = 0; x < width; x++){
+				int xp = x + recX;
+				if(xp < 0 || xp >= this.width)continue;
+				pixels[xp + yp * this.width] = color;
 			}
 		}
 	}

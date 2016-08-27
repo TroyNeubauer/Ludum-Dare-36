@@ -1,10 +1,12 @@
 package com.troy.ludumdare.input;
 
 import java.awt.event.*;
+import com.troy.ludumdare.*;
 
-public class Keyboard implements KeyListener {
+public class Input implements MouseListener, MouseMotionListener, KeyListener {
 
 	private static boolean[] keys = new boolean[1024];
+	public static int mouseX, mouseY;
 
 	protected void setKey(int keyId, boolean pressed) {
 		if (keyId <= 0 || keyId > keys.length - 1) {
@@ -17,19 +19,23 @@ public class Keyboard implements KeyListener {
 	public static boolean isKeyDown(int keyId) {
 		return keys[keyId];
 	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-	}
-
-	@Override
+	
 	public void keyPressed(KeyEvent e) {
-		keys[e.getKeyCode()] = true;
+		setKey(e.getKeyCode(), true);
+	}
+	
+	public void keyReleased(KeyEvent e) {
+		setKey(e.getKeyCode(), false);
+	}
+	
+	public void mouseMoved(MouseEvent e) {
+		mouseX = (int) ((e.getX()) / ((double)Game.game.frame.getWidth() / (double)Game.screen.width)+ (e.getX() * 0.004));
+		mouseY = (int) ((e.getY()) / ((double)Game.game.frame.getHeight() / (double)Game.screen.height) + (e.getY() * 0.02));
+		
 	}
 
-	@Override
-	public void keyReleased(KeyEvent e) {
-		keys[e.getKeyCode()] = false;
+	public void mouseClicked(MouseEvent e) {
+		System.exit(1);
 	}
 
 	public static String getKeyName(int keyId) {
@@ -502,4 +508,38 @@ public class Keyboard implements KeyListener {
 	 * 
 	 */
 	public static final int KEY_BEGIN = 0xFF58;
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
 }

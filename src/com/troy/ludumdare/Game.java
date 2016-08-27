@@ -17,10 +17,11 @@ public class Game extends Canvas {
 
 	public static volatile boolean running;
 
-	private static Game game;
+	public static Game game;
 	public static Screen screen;
 
 	public JFrame frame;
+	public static Input input;
 
 	public int width = 300, height = (int) (width / 16f * 9f);
 	public int windowWidth = width * 4, windowHeight = height * 4;
@@ -34,15 +35,17 @@ public class Game extends Canvas {
 	private WindowHandler windowHandler = new WindowHandler();
 
 	public Game(String[] args) throws Exception {
+		screen = new Screen(width, height);
+		input = new Input();
 		levelState = new LevelState();
 		titleScreenState = new TitleScreenState();
-		gameStateManager = new GameStateManager(levelState, this);
-		screen = new Screen(width, height);
+		gameStateManager = new GameStateManager(titleScreenState, this);
+
 	}
 
 	/** This method is called 60 times per second to update the **/
 	private void update(int updateCount) {
-		KeyHandler.update();
+
 	}
 
 	/** This method draws the entire game onto the window **/
@@ -52,6 +55,9 @@ public class Game extends Canvas {
 
 		screen.clear(g);
 		gameStateManager.render(screen, this);
+		if (Input.mouseX + Input.mouseY * screen.width < screen.pixels.length && Input.mouseX + Input.mouseY * screen.width > 0) {
+			screen.pixels[Input.mouseX + Input.mouseY * screen.width] = 0x0;
+		}
 
 		/** Copy the pixels from the screen class to the pixels in the image **/
 		for (int i = 0; i < pixels.length; i++) {
@@ -59,20 +65,14 @@ public class Game extends Canvas {
 		}
 		/** Draw the image to the screen. This image is the one that was modified by indexing the pixels array and contains all of the current frame's data **/
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-
 		/** Show the buffer and then dispose of the graphics context to avoid memory leaks **/
+		TextMaster.render(g, screen);
+		TextMaster.clear();
 		bs.show();
 		g.dispose();
 	}
 
-	public static void deserializationTest() {
-		
-	}
-
 	public static void main(String[] args) throws Exception {
-		Thread.currentThread().setName("Game-Thread");
-		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-		deserializationTest();
 		try {
 			game = new Game(args);
 		} catch (Exception e) {
@@ -167,6 +167,7 @@ public class Game extends Canvas {
 	}
 
 	public void setupDisplay() throws Exception {
+
 		frame = new JFrame();
 		frame.setVisible(false);
 		frame.setResizable(true);
@@ -177,14 +178,19 @@ public class Game extends Canvas {
 		frame.setLocationRelativeTo(null);
 
 		frame.add(this);
-		frame.addKeyListener(new Keyboard());
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addKeyListener(input);
+		this.addMouseListener(input);
+		this.addMouseMotionListener(input);
 		frame.addWindowFocusListener(windowHandler);
 		frame.addWindowListener(windowHandler);
+
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/textures/icon.png")));
 
 		frame.pack();
 		frame.setVisible(true);
+		frame.requestFocus();
+		frame.requestFocusInWindow();
 
 		boolean hasSetUpGraphics = false;
 		BufferStrategy bs = null;

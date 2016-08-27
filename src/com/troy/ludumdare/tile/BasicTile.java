@@ -12,7 +12,7 @@ public class BasicTile extends Tile {
 
 	@Override
 	public void render(Screen screen, int x, int y, World world) {
-		screen.drawSprite(this.sprite,x, y, world);
+		screen.drawSprite(this.sprite,x, y, world, true);
 	}
 
 	@Override

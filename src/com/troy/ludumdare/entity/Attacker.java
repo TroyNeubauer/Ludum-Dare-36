@@ -50,7 +50,7 @@ public class Attacker extends NPC {
 						if (y < nextLocation.y) yy += 1;
 
 						if (y > nextLocation.y) yy -= 1;
-						
+
 						if (x < nextLocation.x) xx += 1;
 
 						if (x > nextLocation.x) xx -= 1;

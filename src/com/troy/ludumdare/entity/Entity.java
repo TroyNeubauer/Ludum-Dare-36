@@ -28,7 +28,7 @@ public abstract class Entity {
 	
 	/** Called as often as possible to draw this entity to the screen **/
 	public void render(Screen screen, World world) {
-		screen.drawSprite(sprite, x, y, world);
+		screen.drawSprite(sprite, x, y, world, true);
 	}
 	
 	public Vector2i getEntitySize(){
