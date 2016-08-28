@@ -6,12 +6,12 @@ public class WeaponStats {
 	
 	public final float meleAtack, rangeAtack, rangeSpeed;
 	private final int rangeAccuracy;
-	public final int cooldown;
+	public final int cooldown, meleRange;
 	public final Sprite sprite;
 	public final DamageType type;
 	
 	
-	public WeaponStats(float meleAtack, int cooldown, float rangeAtack, float rangeSpeed, int rangeAccuracy, Sprite sprite, DamageType type) {
+	public WeaponStats(float meleAtack, int cooldown, float rangeAtack, float rangeSpeed, int rangeAccuracy, int meleRange, Sprite sprite, DamageType type) {
 		this.meleAtack = meleAtack;
 		this.rangeAtack = rangeAtack;
 		this.sprite = sprite;
@@ -19,6 +19,7 @@ public class WeaponStats {
 		this.rangeSpeed = rangeSpeed;
 		this.rangeAccuracy = rangeAccuracy;
 		this.cooldown = cooldown;
+		this.meleRange = meleRange;
 	}
 	
 	public float getRangeSpeed(){

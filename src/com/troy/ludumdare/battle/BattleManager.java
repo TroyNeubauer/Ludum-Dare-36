@@ -7,6 +7,7 @@ import java.util.List;
 import javax.sound.sampled.*;
 import com.troy.ludumdare.*;
 import com.troy.ludumdare.Item.*;
+import com.troy.ludumdare.Item.WeaponStats.*;
 import com.troy.ludumdare.entity.*;
 import com.troy.ludumdare.gamestate.*;
 import com.troy.ludumdare.graphics.*;
@@ -26,7 +27,7 @@ public class BattleManager {
 	private static Battle currentBattle;
 	private static EntityEnemy enemy;
 	public static boolean battleRunning = false, showingBriefing = false, showingWin = false, showingLoose = false, wonGame = false;
-	private static int battleIndex = 4;
+	private static int battleIndex = 5;
 	private static float goldPenalty = 1;
 	private static Text possibleGold, battleDescription, yourItem, enterToStart, youGotXGold, youWon, youLost;
 	private static Sound next = new Sound("GUInext"), die = new Sound("die"), winGame = new Sound("winGame");
@@ -39,7 +40,7 @@ public class BattleManager {
 	}
 
 	public static void start(EntityPlayer player, World world) {
-	
+
 		try {
 			clip = AudioSystem.getClip();
 			clip.open(AudioSystem.getAudioInputStream(Class.class.getResourceAsStream("/sounds/music.wav")));
@@ -49,7 +50,7 @@ public class BattleManager {
 			System.err.println("Couldn't play music");
 			e.printStackTrace();
 		}
-		
+
 		BattleManager.player = player;
 		BattleManager.world = world;
 		battleRunning = true;
@@ -58,21 +59,27 @@ public class BattleManager {
 		showingLoose = false;
 		currentBattle = getBattle(battleIndex);
 		System.out.println("starting battle #" + currentBattle.number);
-		player.setItem(currentBattle.itemToUse);
 		player.dead = false;
-		UI.inventory.addItem(currentBattle.itemToUse);
+		Item itemToAdd = currentBattle.itemToUse;
+
+		if (!EntityPlayer.inventory.containsItem(itemToAdd) && itemToAdd != null) {
+			EntityPlayer.inventory.addItem(itemToAdd);
+		}
+		if (UIInventory.selectedItem == null) {
+			EntityPlayer.inventory.setSelectedItem(EntityPlayer.inventory.getAdvancedWeapon());
+		}
+
 		UIInventory.selectedItem = currentBattle.itemToUse;
 		player.hasControl = true;
 		world.year = currentBattle.year;
 
-		enemy = new EntityEnemy(currentBattle.enemyX + Maths.randomInt(-15, 15), currentBattle.enemyY + Maths.randomInt(-15, 15), currentBattle.enemy, //
+		enemy = new EntityEnemy(currentBattle.enemyX, currentBattle.enemyY, currentBattle.enemy, //
 			currentBattle.enemyHealth, new Vector2i(0, 0), currentBattle, player);
 		world.add(enemy);
 		enemy.canShoot = true;
 		player.setHealth(currentBattle.playerHealth);
 		player.x = 30 * 16;
 		player.y = 30 * 16;
-		//enemy.kill(world);
 
 	}
 
@@ -85,9 +92,12 @@ public class BattleManager {
 			if (player.isDead()) {
 				loose();
 			}
+			if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
+				if (enemy != null) enemy.kill(world);
+			}
 		} else {
 			if (wonGame) {
-				
+
 			} else if (showingBriefing) {
 				if (Controls.NEXT.hasBeenPressed() || Controls.NEXT2.hasBeenPressed()) {
 					prepare();
@@ -118,19 +128,8 @@ public class BattleManager {
 				TextMaster.addText(battleDescription);
 				TextMaster.addText(possibleGold);
 				TextMaster.addText(yourItem);
-				Item item = currentBattle.itemToUse;
-				if(Maths.intersect(Game.screen.width / 2 + 6, Game.screen.width / 2 + 6 + 20, Input.mouseX) && 
-					Maths.intersect(130, 130 + 20, Input.mouseY)){
-					for (int y = 0; y < 20; y++) {
-						for (int x = 0; x < 20; x++) {
-							screen.drawPixel((x + Game.screen.width / 2 + 6) + (y + 130) * screen.width, 0xAAAAAA);
-							
-						}
-					}
-					TextMaster.addText(new Text(item.name, Input.mouseX, Input.mouseY, 20, Font.BOLD, 0));
-					
-				}
-				screen.drawSprite(item.stats.sprite, Game.screen.width / 2 + 10, 132, world, false);
+
+				drawItems(screen);
 				TextMaster.addText(enterToStart);
 			}
 			if (showingWin) {
@@ -146,6 +145,7 @@ public class BattleManager {
 	}
 
 	public static void win() {
+		LevelState.money += getTotalGold();
 		clip.stop();
 		battleIndex++;
 		goldPenalty = 1f;
@@ -200,7 +200,7 @@ public class BattleManager {
 		currentBattle = getBattle(battleIndex);
 		world.removeEntity(player);
 		player = null;
-		player = new EntityPlayer(30 * 16 + 1, 30 * 16, Assets.basicPlayer, currentBattle.playerHealth, currentBattle.itemToUse);
+		player = new EntityPlayer(30 * 16 + 1, 30 * 16, Assets.basicPlayer, currentBattle.playerHealth);
 		world.add(player);
 		LevelState.player = player;
 		start(player, world);
@@ -213,7 +213,7 @@ public class BattleManager {
 		world.removeEntity(enemy);
 		enemy = null;
 		player = null;
-		player = new EntityPlayer(30 * 16 + 1, 30 * 16, Assets.basicPlayer, currentBattle.playerHealth, currentBattle.itemToUse);
+		player = new EntityPlayer(30 * 16 + 1, 30 * 16, Assets.basicPlayer, currentBattle.playerHealth);
 		world.add(player);
 		LevelState.player = player;
 		start(player, world);
@@ -261,6 +261,68 @@ public class BattleManager {
 		wonGame = true;
 		System.out.println("you beat the game!");
 		winGame.play();
+
+	}
+
+	private static void drawItems(Screen screen) {
+		Item item = currentBattle.itemToUse;
+		if (item != null) {
+			if (Maths.intersect(Game.screen.width / 2 + 6, Game.screen.width / 2 + 6 + 20, Input.mouseX)
+				&& Maths.intersect(130, 130 + 20, Input.mouseY)) {
+				for (int y = 0; y < 20; y++) {
+					for (int x = 0; x < 20; x++) {
+						screen.drawPixel((x + Game.screen.width / 2 + 6) + (y + 130) * screen.width, 0xAAAAAA);
+
+					}
+				}
+				drawItem(screen, item);
+
+			}
+			screen.drawSprite(item.stats.sprite, Game.screen.width / 2 + 10, 132, world, false);
+		} else {
+
+			Item[] items = EntityPlayer.inventory.getItems();
+			int xp = Input.mouseX;
+			int yp = Input.mouseY;
+			xp -= 100;
+			yp -= 132;
+			int indexX = xp / 16;
+			int indexY = yp / 16;
+			if (indexX + indexY * UIInventory.IWidth >= 0) {
+				if (items[indexX + indexY * UIInventory.IWidth] != null) {
+					for (int y = 0; y < 16; y++) {
+						for (int x = 0; x < 16; x++) {
+							screen.drawPixel((x + indexX * 16 + 100) + (y + indexY * 16 + 132) * screen.width, 0x909090);
+						}
+					}
+				}
+
+				Item otherItem = items[indexX + indexY * UIInventory.IWidth];
+				if (otherItem != null) {
+					drawItem(screen, otherItem);
+				}
+			}
+			int numberOfItems = items.length;
+			for (int y = 0; y < UIInventory.IHeight; y++) {
+				for (int x = 0; x < UIInventory.IWidth; x++) {
+					if (items[x + y * UIInventory.IWidth] != null) {
+						screen.drawSprite(items[x + y * UIInventory.IWidth].stats.sprite, x * 16 + 100, y * 16 + 132, LevelState.world, false);
+					}
+				}
+			}
+		}
+	}
+
+	private static void drawItem(Screen screen, Item item) {
+		if (item == null) return;
+		String text = "";
+		if (item.stats.type == DamageType.MELE){
+			text = item.name + "\nAtack Damage " + item.stats.meleAtack + " HP\nCooldown " + item.stats.cooldown + " ticks";
+		}else{
+			text = item.name + "\nAtack Damage " + item.stats.getRangedDamage() + " HP\nCooldown " + item.stats.cooldown+ " ticks" +
+		"\nRange Accutucary " + item.stats.getRangeAccuracy();
+		}
+		TextMaster.addText(new Text(text, Input.mouseX + 5, Input.mouseY - 20, 20, Font.BOLD, 0xFF00FF));
 
 	}
 }

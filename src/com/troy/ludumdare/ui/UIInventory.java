@@ -9,7 +9,7 @@ import com.troy.ludumdare.sound.*;
 
 public class UIInventory extends UIComponent {
 
-	public static Item selectedItem; 
+	public static Item selectedItem;
 	Sound swichSound = new Sound("ItemSwitch");
 
 	private Item[] items;
@@ -23,16 +23,30 @@ public class UIInventory extends UIComponent {
 
 	public boolean addItem(Item item) {
 		for (int i = 0; i < items.length; i++) {
-			if(item.equals(items[i])) return false;
-			if (items[i] == null) {
-				
+			if (items[i] == null && item != null) {
+				if (item.equals(items[i])) return false;
+
 				items[i] = item;
+				System.out.println("slot " + i + " is open! adding item " + item.name);
 				if (selectedItem == null) {
 					selectedItem = item;
 				}
 				return true;
 			}
 		}
+		return false;
+	}
+	
+	public boolean containsItem(Item item){
+		if(item == null) return true;
+		for(int i = 0; i < items.length; i++){
+			if(items[i] == null) continue;
+			if(item.name.equals(items[i].name)){
+				System.out.println("inventory contains item " + item.name + " allready!");
+				return true;
+			}
+		}
+		
 		return false;
 	}
 
@@ -88,6 +102,9 @@ public class UIInventory extends UIComponent {
 	}
 
 	public Item getSelectedItem() {
+		if(selectedItem == null){
+			selectedItem = getAdvancedWeapon();
+		}
 		return selectedItem;
 	}
 
@@ -103,5 +120,19 @@ public class UIInventory extends UIComponent {
 	@Override
 	public void onOffHover() {
 		hovering = false;
+	}
+
+	public Item[] getItems() {
+		return items;
+	}
+
+	public Item getAdvancedWeapon() {
+		for(int i = 0; i < items.length; i++){
+			if(items[i] == null){
+				System.out.println("best weapon is " + items[i - 1].name);
+				return items[i - 1];
+			}
+		}
+		return null;
 	}
 }

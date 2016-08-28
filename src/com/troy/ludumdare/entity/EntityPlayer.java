@@ -1,7 +1,7 @@
 package com.troy.ludumdare.entity;
 
 import com.troy.ludumdare.*;
-import com.troy.ludumdare.Item.*;
+import com.troy.ludumdare.Item.WeaponStats.*;
 import com.troy.ludumdare.graphics.*;
 import com.troy.ludumdare.input.*;
 import com.troy.ludumdare.sound.*;
@@ -12,17 +12,16 @@ import com.troy.troyberry.math.*;
 /** Represents the player **/
 public class EntityPlayer extends EntityLiving {
 
+	public static UIInventory inventory;
+
 	Sound shootSound = new Sound("shoot");
-	public int money, cooldown;
-	private Item item;
+	public int cooldown;
 	public boolean hasControl;
 
-	public EntityPlayer(int x, int y, WalkingSprite walkingSprite, float health, Item item) {
+	public EntityPlayer(int x, int y, WalkingSprite walkingSprite, float health) {
 		super(x, y, walkingSprite, health);
-		this.money = 0;
 		this.hasControl = false;
 		this.cooldown = 0;
-		this.item = item;
 	}
 
 	@Override
@@ -45,31 +44,27 @@ public class EntityPlayer extends EntityLiving {
 		yy = velocity.y;
 		x += xx;
 		y += yy;
-		if (Controls.SHOOT.hasBeenPressed() && cooldown > item.stats.cooldown && hasControl) {
+		if (Controls.SHOOT.hasBeenPressed() && cooldown > EntityPlayer.inventory.getSelectedItem().stats.cooldown && hasControl) {
 			shootSound.play();
 			cooldown = 0;
-			if (UI.inventory.getSelectedItem() != null) {
-				world.shootArrow(Game.screen.width / 2 + 8, Game.screen.height / 2 + 8, Input.mouseX, Input.mouseY,
-					UI.inventory.getSelectedItem().stats.getRangeSpeed(), true, this, item.stats);
+			if (inventory.getSelectedItem() != null) {
+				if (inventory.getSelectedItem().stats.type == DamageType.RANGED) {
+					world.shootArrow(Game.screen.width / 2 + 8, Game.screen.height / 2 + 8, Input.mouseX, Input.mouseY, this,
+						EntityPlayer.inventory.getSelectedItem().stats);
+				}else{
+					world.hit(x + 16, y + 16, Input.mouseX + world.xOffset, Input.mouseY + world.yOffset, inventory.getSelectedItem().stats, this);
+				}
 			}
 		}
 	}
 
 	public void render(Screen screen, World world) {
-		if(isDead())return;
+		if (isDead()) return;
 		Sprite sprite = this.walkingSprite.getCurrentSprite();
-		if(hitCountDown > 0){
+		if (hitCountDown > 0) {
 			sprite = sprite.getHitSprite();
 		}
 		screen.drawSprite(sprite, x, y, world, true);
-	}
-
-	public void setItem(Item item) {
-		this.item = item;
-	}
-
-	public String getMoney() {
-		return "$" + this.money;
 	}
 
 	@Override

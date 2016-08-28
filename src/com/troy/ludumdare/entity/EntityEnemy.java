@@ -66,7 +66,7 @@ public class EntityEnemy extends EntityNPC {
 						this.shoot(world);
 					}
 
-					if ((battle.strategy == BattleStrategy.MELE_FIGHT) || (distance > 7 * 16 //
+					if ((battle.strategy == BattleStrategy.MELE_FIGHT) || (distance > 5 * 16 + 8 //
 						&& battle.strategy == BattleStrategy.RANGED_FIGHT)) {
 
 						int moveDistance = 1;
@@ -95,7 +95,7 @@ public class EntityEnemy extends EntityNPC {
 	private void shoot(World world) {
 		if (coolDown > item.stats.cooldown) {
 			world.shootArrow(x - world.xOffset + 8, y - world.yOffset + 8, //
-				player.x - world.xOffset + 8, player.y - world.yOffset + 8, item.stats.getRangeSpeed(), false, this, item.stats);
+				player.x - world.xOffset + 8, player.y - world.yOffset + 8, this, item.stats);
 			coolDown = 0;
 		}
 

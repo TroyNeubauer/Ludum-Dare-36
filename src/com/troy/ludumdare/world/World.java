@@ -1,14 +1,11 @@
 package com.troy.ludumdare.world;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 import com.troy.ludumdare.*;
 import com.troy.ludumdare.Item.*;
 import com.troy.ludumdare.entity.*;
 import com.troy.ludumdare.graphics.*;
 import com.troy.ludumdare.tile.*;
-import com.troy.ludumdare.ui.*;
 import com.troy.ludumdare.util.*;
 import com.troy.troyberry.math.*;
 
@@ -16,13 +13,13 @@ import com.troy.troyberry.math.*;
 public class World {
 
 	public int year = -5000;
-	Font entityFont = new Font("Times New Roman", Font.BOLD, 30);
 	/** Size of the world in tiles **/
 	private int width, height;
 	public int playerX = 16 * 30, playerY = 16 * 30;
 
 	private List<Integer> entitiesToRemove = new ArrayList<Integer>();
 	private List<Entity> entitiesToAdd = new ArrayList<Entity>();
+	private List<Vector2i> hitCount = new ArrayList<Vector2i>();
 
 	/** An array of all the tile id's **/
 	public byte[] tiles;
@@ -90,10 +87,21 @@ public class World {
 		for (Entity e : entities) {
 			e.render(screen, this);
 		}
+		for(Vector2i vec : hitCount){
+			
+			for(int y = -1; y <= 1; y++){
+				for(int x = -1; x <= 1; x++){
+					screen.drawPixelInWorld(vec.x + x, vec.y + y, 0xFF00FF, this);
+				}
+			}
+		}
 	}
 
 	/** updates everything in the world **/
 	public void update(int updateCount) {
+		if(updateCount % 15 == 0){
+			hitCount.clear();
+		}
 		updateTiles();
 		for (int y = 0; y < width; y++) {
 			for (int x = 0; x < height; x++) {
@@ -113,10 +121,10 @@ public class World {
 			}
 		}
 		entitiesToRemove.clear();
-		for (Entity e : entitiesToAdd){
+		for (Entity e : entitiesToAdd) {
 			entities.add(e);
 		}
-		
+
 		entitiesToAdd.clear();
 	}
 
@@ -204,17 +212,37 @@ public class World {
 		return this;
 	}
 
-	public void shootArrow(int x, int y, int targetX, int targetY, float speed, boolean usePlayerStats, EntityLiving parent, WeaponStats stats) {
+	public void shootArrow(int x, int y, int targetX, int targetY, EntityLiving parent, WeaponStats stats) {
 		int xAdd = 0, yAdd = 0;
-		if(usePlayerStats){
-			WeaponStats weapon = UI.inventory.getSelectedItem().stats;
-			xAdd = Maths.randomInt(-weapon.getRangeAccuracy(), weapon.getRangeAccuracy());
-			yAdd = Maths.randomInt(-weapon.getRangeAccuracy(), weapon.getRangeAccuracy());
-		}
+		xAdd = Maths.randomInt(-stats.getRangeAccuracy(), stats.getRangeAccuracy());
+		yAdd = Maths.randomInt(-stats.getRangeAccuracy(), stats.getRangeAccuracy());
+
 		Vector2f vec = Vector2f.subtract(new Vector2f(x, y), new Vector2f(targetX + xAdd, targetY + yAdd));
-		vec.normalised().negate().scale(speed);
+		vec.normalised().negate().scale(stats.getRangeSpeed());
 		this.add(new EntityArrow(x + xOffset, y + yOffset, vec.x, vec.y, Assets.arrow, parent, stats));
 
+	}
+	
+	public void hit(int x, int y, int targetX, int targetY, WeaponStats stats, EntityPlayer parent) {
+		Vector2f hitVector = Vector2f.subtract(new Vector2f(targetX, targetY), new Vector2f(x, y));
+		hitVector.normalised().scale(stats.meleRange);
+		System.out.println("" + hitVector);
+		int hitX = Maths.round(x + hitVector.x), hitY = Maths.round(y + hitVector.y);
+		System.out.println("x " + hitX + " y " + hitY); 
+		hitCount.add(new Vector2i(hitX, hitY));
+		for(Entity e : entities){
+			if(e.equals(parent) || e instanceof EntityArrow){
+				continue;
+			}
+			double dist = Maths.getDistanceBetweenPoints(hitX, hitY, e.x + 16, e.y + 16);
+			if(dist < stats.meleRange / 2){
+				EntityLiving entity = (EntityLiving) e;
+				entity.hitCountDown = 15;
+				entity.damage(stats.meleAtack);
+				EntityArrow.hit.play();
+			}
+		}
+		
 	}
 
 	public World(WorldStats worldStats, int year) {
@@ -262,7 +290,7 @@ public class World {
 	}
 
 	public int getTileYear() {
-		if (year < -5000) {// between 64000BC and 500BC
+		if (year < -10000) {// between 64000BC and 500BC
 			return 0;
 		}
 		if (year < 0) {// between 5000 AD and 0BC
@@ -303,11 +331,11 @@ public class World {
 
 	public void killArrows() {
 		for (Entity e : entities) {
-			if(e instanceof EntityArrow){
+			if (e instanceof EntityArrow) {
 				EntityArrow entity = (EntityArrow) e;
 				this.removeEntity(entity);
 			}
 		}
-		
+
 	}
 }
