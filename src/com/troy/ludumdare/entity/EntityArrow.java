@@ -2,6 +2,7 @@ package com.troy.ludumdare.entity;
 
 import com.troy.ludumdare.Item.*;
 import com.troy.ludumdare.graphics.*;
+import com.troy.ludumdare.sound.*;
 import com.troy.ludumdare.world.*;
 import com.troy.troyberry.math.*;
 
@@ -12,9 +13,9 @@ public class EntityArrow extends Entity {
 	public AngledSprite angledSprite;
 	public int age;
 	private WeaponStats stats;
-	
 	private EntityLiving parent;
-
+	
+	public static Sound hit = new Sound("hit");
 
 	public EntityArrow(float x, float y, float velX, float velY, AngledSprite sprite, EntityLiving parent, WeaponStats stats) {
 		super(Maths.round(x), Maths.round(y), sprite.getBasicSprite());
@@ -75,6 +76,7 @@ public class EntityArrow extends Entity {
 					world.removeEntity(this);
 					entity.hitCountDown = 15;
 					entity.damage(stats.getRangedDamage());
+					hit.play();
 				}
 			}
 		}

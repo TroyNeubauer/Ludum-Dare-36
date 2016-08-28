@@ -3,6 +3,7 @@ package com.troy.ludumdare.gamestate;
 
 import java.util.*;
 import com.troy.ludumdare.*;
+import com.troy.ludumdare.Item.*;
 import com.troy.ludumdare.battle.*;
 import com.troy.ludumdare.entity.*;
 import com.troy.ludumdare.graphics.*;
@@ -40,7 +41,7 @@ public class LevelState extends GameState {
 		game.loadAssets();
 		
 		world = new World(new WorldStats(150, 100, false), -50000);
-		player = new EntityPlayer(world.playerX, world.playerY, new WalkingSprite(Assets.basicPlayer), 50);
+		player = new EntityPlayer(world.playerX, world.playerY, new WalkingSprite(Assets.basicPlayer), 50, Item.BASIC_BOW);
 		
 		world.add(player);
 		UI.init();

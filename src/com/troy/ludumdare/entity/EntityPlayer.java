@@ -15,11 +15,14 @@ public class EntityPlayer extends EntityLiving {
 	Sound shootSound = new Sound("shoot");
 	public int money, cooldown;
 	private Item item;
-	public boolean hasControl = false;
+	public boolean hasControl;
 
-	public EntityPlayer(int x, int y, WalkingSprite walkingSprite, float health) {
+	public EntityPlayer(int x, int y, WalkingSprite walkingSprite, float health, Item item) {
 		super(x, y, walkingSprite, health);
 		this.money = 0;
+		this.hasControl = false;
+		this.cooldown = 0;
+		this.item = item;
 	}
 
 	@Override
@@ -44,6 +47,7 @@ public class EntityPlayer extends EntityLiving {
 		y += yy;
 		if (Controls.SHOOT.hasBeenPressed() && cooldown > item.stats.cooldown && hasControl) {
 			shootSound.play();
+			cooldown = 0;
 			if (UI.inventory.getSelectedItem() != null) {
 				world.shootArrow(Game.screen.width / 2 + 8, Game.screen.height / 2 + 8, Input.mouseX, Input.mouseY,
 					UI.inventory.getSelectedItem().stats.getRangeSpeed(), true, this, item.stats);

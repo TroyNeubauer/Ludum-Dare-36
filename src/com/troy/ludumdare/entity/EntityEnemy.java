@@ -35,8 +35,9 @@ public class EntityEnemy extends EntityNPC {
 
 	@Override
 	public void render(Screen screen, World world) {
+		if (isDead()) return;
 		Sprite sprite = this.walkingSprite.getCurrentSprite();
-		if(hitCountDown > 0){
+		if (hitCountDown > 0) {
 			sprite = sprite.getHitSprite();
 		}
 		screen.drawSprite(sprite, x, y, world, true);
@@ -44,6 +45,7 @@ public class EntityEnemy extends EntityNPC {
 
 	@Override
 	public void update(World world, int updateCount) {
+		if (isDead()) return;
 		this.hitCountDown--;
 		this.coolDown++;
 		this.walkingSprite.update(updateCount, this.velocity);
@@ -91,12 +93,12 @@ public class EntityEnemy extends EntityNPC {
 	}
 
 	private void shoot(World world) {
-		if (coolDown > item.stats.cooldown){
+		if (coolDown > item.stats.cooldown) {
 			world.shootArrow(x - world.xOffset + 8, y - world.yOffset + 8, //
 				player.x - world.xOffset + 8, player.y - world.yOffset + 8, item.stats.getRangeSpeed(), false, this, item.stats);
 			coolDown = 0;
 		}
-			
+
 	}
 
 	private void updateTarget(World world) {

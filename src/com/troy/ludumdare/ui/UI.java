@@ -47,7 +47,7 @@ public class UI {
 		inventory = new UIInventory(Game.screen.width - 65, 0, 65, Game.screen.height, inventoryPanel);
 		inventoryPanel.add(inventory);
 		
-		inventory.addItem(new Item(1, "Bow I", Item.BASIC_BOW.stats));
+		inventory.addItem(Item.BASIC_BOW);
 	}
 	
 }

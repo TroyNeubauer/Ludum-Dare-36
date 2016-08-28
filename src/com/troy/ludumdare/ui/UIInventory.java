@@ -23,7 +23,9 @@ public class UIInventory extends UIComponent {
 
 	public boolean addItem(Item item) {
 		for (int i = 0; i < items.length; i++) {
+			if(item.equals(items[i])) return false;
 			if (items[i] == null) {
+				
 				items[i] = item;
 				if (selectedItem == null) {
 					selectedItem = item;
@@ -90,7 +92,7 @@ public class UIInventory extends UIComponent {
 	}
 
 	public void setSelectedItem(Item selectedItem) {
-		this.selectedItem = selectedItem;
+		UIInventory.selectedItem = selectedItem;
 	}
 
 	@Override

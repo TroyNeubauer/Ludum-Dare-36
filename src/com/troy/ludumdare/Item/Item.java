@@ -10,7 +10,8 @@ public class Item {
 	public WeaponStats stats;
 	
 	public static final Item BASIC_BOW = new Item(1, "Bow", new WeaponStats(1, 100, 2f, 1f, 25,Assets.bow, DamageType.RANGED)),
-		BOW_II = new Item(1, "Bow II", new WeaponStats(0.5f, 80, 5f, 1.2f, 20,Assets.bow, DamageType.RANGED));
+		BOW_II = new Item(1, "Bow II", new WeaponStats(0.5f, 60, 5f, 1.2f, 20,Assets.bow2, DamageType.RANGED)),
+		BARBARIAN_BOW = new Item(1, "Barbarian Bow", new WeaponStats(3, 80, 7.5f, 2f, 25, Assets.bow, DamageType.RANGED));
 
 	public Item(int id, String name, WeaponStats stats) {
 

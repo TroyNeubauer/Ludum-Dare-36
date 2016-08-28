@@ -22,7 +22,17 @@ public class TextMaster {
 			int y = text.y * (Game.frame.getHeight() / screen.height);
 			g.setFont(insureFont(size, style));
 			g.setColor(new Color(text.color));
-			g.drawString(text.text, x, y);
+			int stringY = y;
+			String[] lines = text.text.split("\n");
+			if (lines.length > 1) {
+				for (int i = 0; i < lines.length; i++) {
+					stringY =  (i * size) + y;
+					g.drawString(lines[i], x, stringY);
+				}
+			} else {
+				g.drawString(text.text, x, y);
+			}
+
 		}
 	}
 
@@ -33,11 +43,10 @@ public class TextMaster {
 			}
 		}
 		try {
-		     GraphicsEnvironment ge = 
-		         GraphicsEnvironment.getLocalGraphicsEnvironment();
-		     ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Class.class.getResourceAsStream("/font.ttf")));
-		} catch (IOException|FontFormatException e) {
-		     e.printStackTrace();
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Class.class.getResourceAsStream("/font.ttf")));
+		} catch (IOException | FontFormatException e) {
+			e.printStackTrace();
 		}
 		Font font = new Font(FONT_NAME, style, size);
 		fonts.add(font);
@@ -45,12 +54,12 @@ public class TextMaster {
 	}
 
 	public static void addText(Text text) {
-		if(!texts.contains(text)){
+		if (!texts.contains(text)) {
 			texts.add(text);
 		}
 	}
-	
-	public static void clear(){
+
+	public static void clear() {
 		texts.clear();
 	}
 }

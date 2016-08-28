@@ -6,7 +6,7 @@ import com.troy.ludumdare.graphics.*;
 public class Assets {
 
 	public static SpriteSheet spriteSheet;
-	public static Sprite nullTile, bow;
+	public static Sprite nullTile, bow, bow2;
 	public static WalkingSprite basicPlayer, barbarianKing, villageOpponent, midevalPlayer;
 	public static AgeingSprite sand, wood, wood2;
 	public static AngledSprite arrow;
@@ -25,6 +25,7 @@ public class Assets {
 		wood = new AgeingSprite(128, 16, 16, 16, 8, Assets.spriteSheet);
 		wood2 = new AgeingSprite(128, 32, 16, 16, 8, Assets.spriteSheet);
 		bow = new Sprite(128, 128, 16, 16, spriteSheet);
+		bow2 = new Sprite(bow, 0xFFFFFFFF, 0xFF0);
 		arrow = new AngledSprite(128, 96, 16, 16, 8, spriteSheet);
 		
 		basicPlayer = new WalkingSprite(0, 0, 32, 32, spriteSheet, 280);

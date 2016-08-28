@@ -1,25 +1,29 @@
 package com.troy.ludumdare.sound;
 
-import java.io.*;
 import javax.sound.sampled.*;
 
 public class Sound {
-	private final String name;
-	private Clip clip;
+
+	public final String name;
+
 	public Sound(String name) {
-		this.name = "/sounds/" + name + ".wav";
+
+		this.name = name;
+
 	}
 
-	public void play() {
-		try {
-			if(clip != null){
-				clip.close();
+	public synchronized void play() {
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					Clip clip = AudioSystem.getClip();
+					AudioInputStream inputStream = AudioSystem.getAudioInputStream(Class.class.getResourceAsStream("/sounds/" + name + ".wav"));
+					clip.open(inputStream);
+					clip.start();
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}
 			}
-			clip = AudioSystem.getClip();
-			clip.open(AudioSystem.getAudioInputStream(Class.class.getResourceAsStream(name)));
-			clip.start();
-		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException | NullPointerException e) {
-			System.err.println("couldnt play sound! " + name);
-		}
+		}).start();
 	}
 }

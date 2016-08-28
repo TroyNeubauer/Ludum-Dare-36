@@ -54,6 +54,24 @@ public class Sprite {
 		}
 	}
 
+	public Sprite(Sprite other, int scanColor, int color) {
+		this.width = other.width;
+		this.height = other.height;
+
+		this.x = other.x;
+		this.y = other.y;
+		this.spriteSheet = other.spriteSheet;
+		this.pixels = new int[width * height];
+		for (int i = 0; i < pixels.length; i++) {
+			int pixelColor = other.pixels[i];
+			if(pixelColor == scanColor){
+				this.pixels[i] = color;
+			}else{
+				this.pixels[i] = pixelColor;
+			}
+		}
+	}
+
 	public Sprite getHitSprite() {
 		int[] pixels = new int[this.width * this.height];
 		for (int i = 0; i < this.width * this.height; i++) {
