@@ -20,9 +20,8 @@ public class UIButton extends UIComponent {
 
 	@Override
 	public void onClick() {
-		System.out.println(text.text + " was pressed");
 		if(text.text.equals("Play")){
-			if (Input.isKeyDown(Input.KEY_ENTER)) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_ENTER)) {
 				try {
 					Game.game.gameStateManager.setState(Game.game.levelState);
 				} catch (Exception e) {
@@ -32,6 +31,8 @@ public class UIButton extends UIComponent {
 		}
 		else if(text.text.equals("Info")){
 			InfoWindow.initialize();
+		}else if(text.text.equals("Next Battle")){
+			System.out.println("goin to next battle");
 		}
 
 	}

@@ -84,6 +84,14 @@ public class Screen {
 		pixels[location] = color;
 	}
 	
+	public void drawPixelInWorld(int x, int y, int color, World world) {
+		x -= world.xOffset;
+		y -= world.yOffset;
+		int location = x + y * width;
+		if(x < 0 || y < 0|| location >= (this.width * this.height))return;
+		pixels[location] = color;
+	}
+	
 	public void drawString(Font font, String string, int x, int y){
 		g.setColor(Color.black);
 		g.setFont(font);

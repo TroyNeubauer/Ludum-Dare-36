@@ -9,7 +9,7 @@ import com.troy.ludumdare.ui.*;
 public class TitleScreenState extends GameState {
 	Text play = new Text("Play", 17, 4, 15, Font.PLAIN, 0x0);
 	Text info = new Text("Info", 17, 2, 15, Font.PLAIN, 0x0);
-	Text clickHint = new Text("Because of a bug, if you click within the window, the game will crash. To \"click\" hover over an item then hiy enter.", 30, 150, 10, Font.PLAIN, 0xFFFFFF);
+	Text clickHint = new Text("Because of a bug, if you click within the window, the window bugs out. To \"click\" hover over an item then hiy enter or shift.", 30, 150, 10, Font.PLAIN, 0xFFFFFF);
 	private UIPanel panel;
 	private UIButton playButton, infoButton;
 

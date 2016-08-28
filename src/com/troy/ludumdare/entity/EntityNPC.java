@@ -6,13 +6,13 @@ import com.troy.ludumdare.tile.*;
 import com.troy.ludumdare.util.*;
 import com.troy.troyberry.math.*;
 
-public abstract class NPC extends EntityLiving {
+public abstract class EntityNPC extends EntityLiving {
 
-	protected Vector2i nextLocation, desiredLocation;
+	protected Vector2i nextLocation;
 
 	protected List<Node> pathFindInstructions;
 
-	public NPC(int x, int y, WalkingSprite walkingSprite, float health, Vector2i velocity) {
+	public EntityNPC(int x, int y, WalkingSprite walkingSprite, float health, Vector2i velocity) {
 		super(x, y, walkingSprite, health);
 		this.velocity = velocity;
 	}

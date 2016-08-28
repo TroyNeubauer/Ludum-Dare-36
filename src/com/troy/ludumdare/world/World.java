@@ -4,22 +4,25 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import com.troy.ludumdare.*;
+import com.troy.ludumdare.Item.*;
 import com.troy.ludumdare.entity.*;
 import com.troy.ludumdare.graphics.*;
 import com.troy.ludumdare.tile.*;
+import com.troy.ludumdare.ui.*;
 import com.troy.ludumdare.util.*;
 import com.troy.troyberry.math.*;
 
 /** Represents the world **/
 public class World {
 
-	int year = -64000;
+	public int year = -6000;
 	Font entityFont = new Font("Times New Roman", Font.BOLD, 30);
 	/** Size of the world in tiles **/
 	private int width, height;
 	public int playerX = 16 * 30, playerY = 16 * 30;
 
 	private List<Integer> entitiesToRemove = new ArrayList<Integer>();
+	private List<Entity> entitiesToAdd = new ArrayList<Entity>();
 
 	/** An array of all the tile id's **/
 	public byte[] tiles;
@@ -51,9 +54,9 @@ public class World {
 
 	private static Random random = new Random();
 
-	public Vector2i checkCollision(int velX, int velY, Entity entity) {
+	public Vector2i checkCollision(int velX, int velY, Entity entity, boolean ignoreStrafing) {
 		Vector2i tileLocation = entity.getPosition(), entityPosition = entity.getPosition(), entitySize = entity.getEntitySize();
-		if (velX != 0 && velY != 0) {
+		if (velX != 0 && velY != 0 && !ignoreStrafing) {
 			if (entity instanceof EntityPlayer) return new Vector2i(0, 0);
 			return new Vector2i(velX, 0);
 		}
@@ -91,6 +94,7 @@ public class World {
 
 	/** updates everything in the world **/
 	public void update(int updateCount) {
+		updateTiles();
 		for (int y = 0; y < width; y++) {
 			for (int x = 0; x < height; x++) {
 				int index = x + y * width;
@@ -109,6 +113,11 @@ public class World {
 			}
 		}
 		entitiesToRemove.clear();
+		for (Entity e : entitiesToAdd){
+			entities.add(e);
+		}
+		
+		entitiesToAdd.clear();
 	}
 
 	public void removeEntity(Entity entity) {
@@ -190,8 +199,22 @@ public class World {
 	}
 
 	public World add(Entity e) {
-		entities.add(e);
+		entitiesToAdd.add(e);
+		e.onSpawn();
 		return this;
+	}
+
+	public void shootArrow(int x, int y, int targetX, int targetY, float speed, boolean usePlayerStats, EntityLiving parent, WeaponStats stats) {
+		int xAdd = 0, yAdd = 0;
+		if(usePlayerStats){
+			WeaponStats weapon = UI.inventory.getSelectedItem().stats;
+			xAdd = Maths.randomInt(-weapon.getRangeAccuracy(), weapon.getRangeAccuracy());
+			yAdd = Maths.randomInt(-weapon.getRangeAccuracy(), weapon.getRangeAccuracy());
+		}
+		Vector2f vec = Vector2f.subtract(new Vector2f(x, y), new Vector2f(targetX + xAdd, targetY + yAdd));
+		vec.normalised().negate().scale(speed);
+		this.add(new EntityArrow(x + xOffset, y + yOffset, vec.x, vec.y, Assets.arrow, parent, stats));
+
 	}
 
 	public World(WorldStats worldStats) {
@@ -217,8 +240,11 @@ public class World {
 				tiles[x + y * this.width] = 2;
 			}
 		}
-		for(int i = 0; i < 20; i++){
-			tiles[(30 + 12 - random.nextInt(24)) + ( 30 + 12 - random.nextInt(24)) * this.width] = 3;
+		for (int i = 0; i < 18; i++) {
+			tiles[(30 + 12 - random.nextInt(24)) + (30 + 12 - random.nextInt(24)) * this.width] = 3;
+		}
+		for (int i = 0; i < 4; i++) {
+			tiles[(30 + 12 - random.nextInt(24)) + (30 + 12 - random.nextInt(24)) * this.width] = 2;
 		}
 		tiles[30 + 30 * this.width] = 1;
 		tiles[31 + 30 * this.width] = 1;
@@ -230,7 +256,47 @@ public class World {
 	}
 
 	public void centerCameraOnPoint(int x, int y) {
-		xOffset = x - Game.screen.width / 2;
-		yOffset = y - Game.screen.height / 2;
+		xOffset = x - Game.screen.width / 2 + 8;
+		yOffset = y - Game.screen.height / 2 + 8;
+	}
+
+	public int getTileYear() {
+		if (year < -5000) {// between 64000BC and 500BC
+			return 0;
+		}
+		if (year < 0) {// between 5000 AD and 0BC
+			return 1;
+		}
+		if (year < 750) {//Between 0 AD and 750 AD 
+			return 2;
+		}
+		if (year < 1075) {//between 750 AD and 1075 AD
+			return 3;
+		}
+		if (year < 1300) {//between 1075 AD and 1300 AD
+			return 4;
+		}
+		if (year < 1800) {//between 1300 AD and 1800 AD
+			return 5;
+		}
+		if (year < 1950) {//between 1800 AD and 1950
+			return 6;
+		}
+		return 7;// 1950 AD and above
+	}
+
+	public void updateTiles() {
+		int index = getTileYear();
+		Assets.sand.update(index);
+		Assets.wood.update(index);
+		Assets.wood2.update(index);
+	}
+
+	public String getYear() {
+		String s;
+		if (Maths.isNegative(year)) {
+			return Math.abs(year) + " BC";
+		}
+		return year + " AD";
 	}
 }

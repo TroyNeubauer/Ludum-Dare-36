@@ -18,7 +18,7 @@ public class Sound {
 			clip = AudioSystem.getClip();
 			clip.open(AudioSystem.getAudioInputStream(Class.class.getResourceAsStream(name)));
 			clip.start();
-		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException | NullPointerException e) {
 			System.err.println("couldnt play sound! " + name);
 		}
 	}

@@ -1,13 +1,14 @@
 package com.troy.ludumdare.graphics;
 
 import java.awt.*;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 import com.troy.ludumdare.*;
 
 public class TextMaster {
 
-	private static final String FONT_NAME = "Times New Roman";
+	private static final String FONT_NAME = "Gabriola";
 
 	private static List<Text> texts = new ArrayList<Text>();
 	private static List<Font> fonts = new ArrayList<Font>();
@@ -30,6 +31,13 @@ public class TextMaster {
 			if (font.getSize() == size && font.getStyle() == style) {
 				return font;
 			}
+		}
+		try {
+		     GraphicsEnvironment ge = 
+		         GraphicsEnvironment.getLocalGraphicsEnvironment();
+		     ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Class.class.getResourceAsStream("/font.ttf")));
+		} catch (IOException|FontFormatException e) {
+		     e.printStackTrace();
 		}
 		Font font = new Font(FONT_NAME, style, size);
 		fonts.add(font);

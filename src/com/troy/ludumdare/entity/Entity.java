@@ -17,7 +17,6 @@ public abstract class Entity {
 		this.y = y;
 		this.sprite = sprite;
 		this.velocity = new Vector2i(0, 0);
-		this.onSpawn();
 	}
 	
 	/** An abstract method that is called when an entity spawns **/
@@ -41,6 +40,16 @@ public abstract class Entity {
 	
 	public Vector2i tilePosition(){
 		return new Vector2i(x / Tile.SIZE, y / Tile.SIZE);
+	}
+	
+	public boolean equals(Object other){
+		if(!(other instanceof Entity)) return false;
+		Entity e = (Entity) other;
+		if(e.x == this.x && e.y == this.y){
+			return true;
+		}
+		
+		return false;
 	}
 
 }

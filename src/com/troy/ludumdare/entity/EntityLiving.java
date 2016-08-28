@@ -8,6 +8,7 @@ import com.troy.troyberry.math.*;
 public abstract class EntityLiving extends Entity {
 	
 	WalkingSprite walkingSprite;
+	public int hitCountDown;
 	
 	/** This entity's health **/
 	private float health;

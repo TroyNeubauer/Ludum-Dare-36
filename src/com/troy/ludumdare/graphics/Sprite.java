@@ -10,7 +10,7 @@ public class Sprite {
 	private final int x, y;
 
 	/** The spite's pixels **/
-	public final int pixels[];
+	public int pixels[];
 
 	/** The sprite sheet that the sprite belongs to **/
 	private final SpriteSheet spriteSheet;
@@ -39,6 +39,34 @@ public class Sprite {
 		this.y = y;
 		this.spriteSheet = null;
 		this.pixels = pixels;
+	}
+
+	public Sprite(Sprite other) {
+		this.width = other.width;
+		this.height = other.height;
+
+		this.x = other.x;
+		this.y = other.y;
+		this.spriteSheet = other.spriteSheet;
+		this.pixels = new int[width * height];
+		for (int i = 0; i < pixels.length; i++) {
+			this.pixels[i] = other.pixels[i];
+		}
+	}
+
+	public Sprite getHitSprite() {
+		int[] pixels = new int[this.width * this.height];
+		for (int i = 0; i < this.width * this.height; i++) {
+			int color = this.pixels[i];
+			if (color == 0xFFFF00FF){
+				pixels[i] = 0xFFFF00FF;
+				continue;
+			}
+			pixels[i] = 0xFF7777;
+		}
+
+		return new Sprite(this.x, this.y, this.width, this.height, pixels);
+
 	}
 
 	/** Loads the image data from the sprite sheet into the pixels array **/

@@ -41,7 +41,7 @@ public class UIPanel {
 	public void update(int updateCount) {
 		if(!enabled) return;
 		int mouseX = -1, mouseY = -1;
-		if(Input.isKeyDown(Input.KEY_ENTER)){
+		if(Keyboard.isKeyDown(Keyboard.KEY_ENTER) || Keyboard.isKeyDown(Keyboard.KEY_SHIFT)){
 			enter = true;
 			if(!enterLast){
 				mouseX = Input.mouseX;

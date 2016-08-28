@@ -9,7 +9,7 @@ public class Version {
 	/** some info about the version such as Alpha Beta or release **/
 	public static final String VERSION_INFO = "Alpha";
 	
-	public static final String NAME = "INSERT_NAME_HERE ";
+	public static final String NAME = "Ancient Arena";
 	
 	/** @return The complete version as a String **/
 	public static String getVersion() {
@@ -18,7 +18,7 @@ public class Version {
 	
 	/** @return The title used for the window **/
 	public static String getWindowTitle(){
-		return NAME + Version.getVersion();
+		return NAME + " " +Version.getVersion();
 	}
 	
 	public static String getName(){

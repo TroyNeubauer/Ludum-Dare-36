@@ -20,7 +20,7 @@ public class Game extends Canvas {
 	public static Game game;
 	public static Screen screen;
 
-	public JFrame frame;
+	public static JFrame frame;
 	public static Input input;
 
 	public int width = 300, height = (int) (width / 16f * 9f);
@@ -39,13 +39,13 @@ public class Game extends Canvas {
 		input = new Input();
 		levelState = new LevelState();
 		titleScreenState = new TitleScreenState();
-		gameStateManager = new GameStateManager(titleScreenState, this);
+		gameStateManager = new GameStateManager(levelState, this);
 
 	}
 
 	/** This method is called 60 times per second to update the **/
 	private void update(int updateCount) {
-
+		KeyHandler.update();
 	}
 
 	/** This method draws the entire game onto the window **/
@@ -80,7 +80,7 @@ public class Game extends Canvas {
 		}
 
 		try {
-			game.setupDisplay();
+			Game.setupDisplay();
 		} catch (Exception e) {
 			crashReport = new CrashReport("Setting Up Display", e).print();
 		}
@@ -152,7 +152,7 @@ public class Game extends Canvas {
 				frameTimer = 0;
 			}
 
-			this.frame.setTitle(Version.getWindowTitle() + "  |  " + currentUpdatesAverage + " ups, " + currentFramesAverage + " fps");
+			Game.frame.setTitle(Version.getWindowTitle() + "  |  " + currentUpdatesAverage + " ups, " + currentFramesAverage + " fps");
 			render();
 			frames++;
 
@@ -166,26 +166,27 @@ public class Game extends Canvas {
 		System.exit(0);
 	}
 
-	public void setupDisplay() throws Exception {
+	public static void setupDisplay() throws Exception {
 
 		frame = new JFrame();
 		frame.setVisible(false);
 		frame.setResizable(true);
-		frame.setPreferredSize(new Dimension(windowWidth, windowHeight));
-		frame.setSize(windowWidth, windowHeight);
-		frame.setMinimumSize(new Dimension(windowWidth / 3, windowHeight / 3));
+		frame.setPreferredSize(new Dimension(game.windowWidth,game.windowHeight));
+		frame.setSize(game.windowWidth, game.windowHeight);
+		frame.setMinimumSize(new Dimension(game.windowWidth / 3, game.windowHeight / 3));
 		frame.setTitle(Version.getWindowTitle());
 		frame.setLocationRelativeTo(null);
 
-		frame.add(this);
+		frame.add(game);
+		frame.addKeyListener(new Keyboard());
 		frame.addKeyListener(input);
-		this.addMouseListener(input);
-		this.addMouseMotionListener(input);
-		frame.addWindowFocusListener(windowHandler);
-		frame.addWindowListener(windowHandler);
+		game.addMouseListener(input);
+		game.addMouseMotionListener(input);
+		frame.addWindowFocusListener(game.windowHandler);
+		frame.addWindowListener(game.windowHandler);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/textures/icon.png")));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(game.getClass().getResource("/textures/icon.png")));
 
 		frame.pack();
 		frame.setVisible(true);
@@ -196,9 +197,9 @@ public class Game extends Canvas {
 		BufferStrategy bs = null;
 
 		while (!hasSetUpGraphics) {
-			bs = getBufferStrategy();
+			bs = game.getBufferStrategy();
 			if (bs == null) {
-				createBufferStrategy(3);
+				game.createBufferStrategy(3);
 			} else {
 				hasSetUpGraphics = true;
 			}
