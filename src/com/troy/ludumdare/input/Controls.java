@@ -4,7 +4,8 @@ package com.troy.ludumdare.input;
 public class Controls {
 	
 	/** A keybinding that is used to control movements **/
-	public static final KeyBinding INVENTORY = new KeyBinding(Keyboard.KEY_E), SHOOT = new KeyBinding(Keyboard.KEY_SPACE);
+	public static final KeyBinding INVENTORY = new KeyBinding(Keyboard.KEY_E), SHOOT = new KeyBinding(Keyboard.KEY_SPACE),
+		NEXT = new KeyBinding(Keyboard.KEY_SHIFT), NEXT2 = new KeyBinding(Keyboard.KEY_ENTER);
 	
 	public static void init(){
 		

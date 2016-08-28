@@ -12,7 +12,7 @@ public abstract class EntityLiving extends Entity {
 	
 	/** This entity's health **/
 	private float health;
-	private boolean dead;
+	public boolean dead;
 
 	public EntityLiving(int x, int y, WalkingSprite sprite, float health) {
 		super(x, y, sprite.getBasicSprite());

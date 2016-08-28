@@ -29,10 +29,8 @@ public class UIButton extends UIComponent {
 				}
 			}
 		}
-		else if(text.text.equals("Info")){
-			InfoWindow.initialize();
-		}else if(text.text.equals("Next Battle")){
-			System.out.println("goin to next battle");
+		if(text.text.equals("Quit")){
+			System.exit(0);
 		}
 
 	}

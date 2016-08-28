@@ -1,4 +1,4 @@
-package com.troy.ludumdare.ai;
+package com.troy.ludumdare.battle;
 
 import com.troy.ludumdare.Item.*;
 import com.troy.ludumdare.graphics.*;

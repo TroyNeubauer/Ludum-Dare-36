@@ -9,7 +9,7 @@ import com.troy.ludumdare.sound.*;
 
 public class UIInventory extends UIComponent {
 
-	private Item selectedItem;
+	public static Item selectedItem; 
 	Sound swichSound = new Sound("ItemSwitch");
 
 	private Item[] items;

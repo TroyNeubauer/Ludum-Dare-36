@@ -52,6 +52,7 @@ public class EntityPlayer extends EntityLiving {
 	}
 
 	public void render(Screen screen, World world) {
+		if(isDead())return;
 		Sprite sprite = this.walkingSprite.getCurrentSprite();
 		if(hitCountDown > 0){
 			sprite = sprite.getHitSprite();

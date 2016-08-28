@@ -2,8 +2,8 @@ package com.troy.ludumdare.entity;
 
 import java.util.*;
 import com.troy.ludumdare.Item.*;
-import com.troy.ludumdare.ai.*;
-import com.troy.ludumdare.ai.Battle.*;
+import com.troy.ludumdare.battle.*;
+import com.troy.ludumdare.battle.Battle.*;
 import com.troy.ludumdare.gamestate.*;
 import com.troy.ludumdare.graphics.*;
 import com.troy.ludumdare.tile.*;
@@ -17,6 +17,7 @@ public class EntityEnemy extends EntityNPC {
 	private EntityPlayer player;
 	private Item item;
 	private int coolDown;
+	public boolean canShoot;
 
 	public EntityEnemy(int x, int y, WalkingSprite attacker, float health, Vector2i velocity, Battle battle, EntityPlayer player) {
 		super(x, y, attacker, health, velocity);
@@ -24,6 +25,7 @@ public class EntityEnemy extends EntityNPC {
 		this.battle = battle;
 		this.player = player;
 		this.item = battle.enemyItem;
+		canShoot = true;
 	}
 
 	@Override
@@ -58,7 +60,7 @@ public class EntityEnemy extends EntityNPC {
 					int xx = 0;
 					int yy = 0;
 					double distance = Maths.getDistanceBetweenPoints(x, y, player.x, player.y);
-					if (battle.strategy != BattleStrategy.MELE_FIGHT || battle.strategy != BattleStrategy.MELE_RUN) {
+					if ((battle.strategy != BattleStrategy.MELE_FIGHT || battle.strategy != BattleStrategy.MELE_RUN) && this.canShoot) {
 						this.shoot(world);
 					}
 

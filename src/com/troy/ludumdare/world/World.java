@@ -15,7 +15,7 @@ import com.troy.troyberry.math.*;
 /** Represents the world **/
 public class World {
 
-	public int year = -6000;
+	public int year = -5000;
 	Font entityFont = new Font("Times New Roman", Font.BOLD, 30);
 	/** Size of the world in tiles **/
 	private int width, height;
@@ -217,7 +217,8 @@ public class World {
 
 	}
 
-	public World(WorldStats worldStats) {
+	public World(WorldStats worldStats, int year) {
+		this.year = year;
 		this.width = (short) worldStats.width;
 		this.height = (short) worldStats.height;
 		this.tiles = new byte[width * height];
@@ -298,5 +299,15 @@ public class World {
 			return Math.abs(year) + " BC";
 		}
 		return year + " AD";
+	}
+
+	public void killArrows() {
+		for (Entity e : entities) {
+			if(e instanceof EntityArrow){
+				EntityArrow entity = (EntityArrow) e;
+				this.removeEntity(entity);
+			}
+		}
+		
 	}
 }

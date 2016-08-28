@@ -15,11 +15,11 @@ public class TextMaster {
 
 	public static void render(Graphics g, Screen screen) {
 		for (Text text : texts) {
-			int size = (text.size * (Game.game.frame.getWidth() / screen.width)) / 2;
+			int size = (text.size * (Game.frame.getWidth() / screen.width)) / 2;
 			int style = text.style;
 			String letters = text.text;
-			int x = text.x * (Game.game.frame.getWidth() / screen.width);
-			int y = text.y * (Game.game.frame.getHeight() / screen.height);
+			int x = text.x * (Game.frame.getWidth() / screen.width);
+			int y = text.y * (Game.frame.getHeight() / screen.height);
 			g.setFont(insureFont(size, style));
 			g.setColor(new Color(text.color));
 			g.drawString(text.text, x, y);

@@ -133,6 +133,9 @@ public class Game extends Canvas {
 				updates++;
 				delta--;
 			}
+			if(delta > 5){
+				delta = 5;
+			}
 			if (updateTimer >= 1000000000) {
 
 				currentUpdatesAverage = updates;
