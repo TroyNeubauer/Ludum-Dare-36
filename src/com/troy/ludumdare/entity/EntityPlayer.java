@@ -52,7 +52,7 @@ public class EntityPlayer extends EntityLiving {
 					world.shootArrow(Game.screen.width / 2 + 8, Game.screen.height / 2 + 8, Input.mouseX, Input.mouseY, this,
 						EntityPlayer.inventory.getSelectedItem().stats);
 				}else{
-					world.hit(x + 16, y + 16, Input.mouseX + world.xOffset, Input.mouseY + world.yOffset, inventory.getSelectedItem().stats, this);
+					world.hit(x + 16, y + 16, Input.mouseX + world.xOffset, Input.mouseY + world.yOffset, inventory.getSelectedItem().stats, (EntityLiving)this);
 				}
 			}
 		}

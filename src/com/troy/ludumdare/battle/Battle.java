@@ -1,6 +1,7 @@
 package com.troy.ludumdare.battle;
 
 import com.troy.ludumdare.Item.*;
+import com.troy.ludumdare.entity.*;
 import com.troy.ludumdare.graphics.*;
 
 public class Battle {
@@ -12,6 +13,7 @@ public class Battle {
 	public final Item itemToUse, enemyItem;
 	public final boolean forcedItem;
 	public final float enemyHealth, playerHealth;
+	public EntityEnemy secondAttacker;
 
 	public Battle(int number, int year, int reward, String description, WalkingSprite enemy, BattleStrategy strategy, Item enemyItem, int enemyX, int enemyY, float enemyHealth, float playerHealth, Item itemToUse) {
 		this.year = year;
@@ -27,8 +29,26 @@ public class Battle {
 		this.playerHealth = playerHealth;
 		this.enemyX = enemyX * 16;
 		this.enemyY = enemyY * 16;
+		secondAttacker = null;
 	}
 	
+	public Battle(int number, int year, int reward, String description, WalkingSprite enemy, BattleStrategy strategy, Item enemyItem, int enemyX, int enemyY, float enemyHealth, float playerHealth, Item itemToUse, EntityEnemy entityEnemy) {
+		this.year = year;
+		this.reward = reward;
+		this.number = number;
+		this.description = description;
+		this.enemy = enemy;
+		this.strategy = strategy;
+		this.itemToUse = itemToUse;
+		this.forcedItem = (itemToUse == null) ? false : true;
+		this.enemyItem = enemyItem;
+		this.enemyHealth = enemyHealth;
+		this.playerHealth = playerHealth;
+		this.enemyX = enemyX * 16;
+		this.enemyY = enemyY * 16;
+		secondAttacker = entityEnemy;
+	}
+
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		sb.append("Battle #" + number + " Description:\n" + this.description + "\n");

@@ -7,7 +7,7 @@ public class Assets {
 
 	public static SpriteSheet spriteSheet;
 	public static Sprite nullTile, bow, bow2, bow3, basicGun, copperSword, bronzeSword, ironSword, steelSword;
-	public static WalkingSprite basicPlayer, barbarianKing, villageOpponent, midevalPlayer;
+	public static WalkingSprite basicPlayer, barbarianKing, villageOpponent, midevalPlayer, cesar;
 	public static AgeingSprite sand, wood, wood2;
 	public static AngledSprite arrow;
 	
@@ -37,6 +37,7 @@ public class Assets {
 		basicPlayer = new WalkingSprite(0, 0, 32, 32, spriteSheet, 280);
 		barbarianKing = new WalkingSprite(0, 128, 32, 32, spriteSheet, 175);
 		villageOpponent = new WalkingSprite(0, 256, 32, 32, spriteSheet, 300);
+		cesar = new WalkingSprite(96, 256, 32, 32, spriteSheet, 300);
 		
 		midevalPlayer = new WalkingSprite(0, 384, 32, 32, spriteSheet, 220);
 	}

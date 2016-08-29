@@ -15,7 +15,8 @@ public class Game extends Canvas {
 	private static final long serialVersionUID = 2783110120763573889L;
 	public static CrashReport crashReport;
 
-	public static volatile boolean running;
+	public static volatile boolean running; 
+	public static int tickCount;
 
 	public static Game game;
 	public static Screen screen;
@@ -46,6 +47,7 @@ public class Game extends Canvas {
 	/** This method is called 60 times per second to update the **/
 	private void update(int updateCount) {
 		KeyHandler.update();
+		tickCount = updateCount;
 	}
 
 	/** This method draws the entire game onto the window **/

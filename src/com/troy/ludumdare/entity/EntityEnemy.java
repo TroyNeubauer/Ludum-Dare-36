@@ -2,6 +2,7 @@ package com.troy.ludumdare.entity;
 
 import java.util.*;
 import com.troy.ludumdare.Item.*;
+import com.troy.ludumdare.Item.WeaponStats.*;
 import com.troy.ludumdare.battle.*;
 import com.troy.ludumdare.battle.Battle.*;
 import com.troy.ludumdare.gamestate.*;
@@ -13,9 +14,9 @@ import com.troy.troyberry.math.*;
 public class EntityEnemy extends EntityNPC {
 
 	private Random random;
-	private Battle battle;
-	private EntityPlayer player;
-	private Item item;
+	public Battle battle;
+	public EntityPlayer player;
+	public Item item;
 	private int coolDown;
 	public boolean canShoot;
 
@@ -24,7 +25,11 @@ public class EntityEnemy extends EntityNPC {
 		this.random = new Random();
 		this.battle = battle;
 		this.player = player;
-		this.item = battle.enemyItem;
+		if (battle != null) {
+			this.item = battle.enemyItem;
+		} else {
+			this.item = null;
+		}
 		canShoot = true;
 	}
 
@@ -62,8 +67,19 @@ public class EntityEnemy extends EntityNPC {
 					int xx = 0;
 					int yy = 0;
 					double distance = Maths.getDistanceBetweenPoints(x, y, player.x, player.y);
-					if ((battle.strategy != BattleStrategy.MELE_FIGHT || battle.strategy != BattleStrategy.MELE_RUN) && this.canShoot) {
-						this.shoot(world);
+					if (item != null) {
+						if ((battle.strategy != BattleStrategy.MELE_FIGHT || battle.strategy != BattleStrategy.MELE_RUN) && this.canShoot
+							&& coolDown > item.stats.cooldown) {
+							if (item.stats.type == DamageType.RANGED) {
+								this.shoot(world);
+							} else {
+
+								world.hit(x + 16, y + 16, player.x + 16, player.y + 16, item.stats, (EntityLiving) this);
+								coolDown = 0;
+							}
+						}
+					} else {
+						System.out.println("skipping because null");
 					}
 
 					if ((battle.strategy == BattleStrategy.MELE_FIGHT) || (distance > 5 * 16 + 8 //

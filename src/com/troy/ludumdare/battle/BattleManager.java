@@ -27,11 +27,12 @@ public class BattleManager {
 	private static Battle currentBattle;
 	private static EntityEnemy enemy;
 	public static boolean battleRunning = false, showingBriefing = false, showingWin = false, showingLoose = false, wonGame = false;
-	private static int battleIndex = 5;
+	private static int battleIndex = 1;
 	private static float goldPenalty = 1;
-	private static Text possibleGold, battleDescription, yourItem, enterToStart, youGotXGold, youWon, youLost;
+	private static Text possibleGold, battleDescription, yourItem, enterToStart, youGotXGold, youWon, youLost, timeTaken;
 	private static Sound next = new Sound("GUInext"), die = new Sound("die"), winGame = new Sound("winGame");
-	private static Clip clip;
+	private static Clip music;
+	private static int beatTick = 0;
 
 	public static void init() {
 		for (Battle battle : BATTLES) {
@@ -42,15 +43,14 @@ public class BattleManager {
 	public static void start(EntityPlayer player, World world) {
 
 		try {
-			clip = AudioSystem.getClip();
-			clip.open(AudioSystem.getAudioInputStream(Class.class.getResourceAsStream("/sounds/music.wav")));
-			clip.start();
-			clip.loop(-1);
+			music = AudioSystem.getClip();
+			music.open(AudioSystem.getAudioInputStream(Class.class.getResourceAsStream("/sounds/music.wav")));
+			music.start();
+			music.loop(-1);
 		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
 			System.err.println("Couldn't play music");
 			e.printStackTrace();
 		}
-
 		BattleManager.player = player;
 		BattleManager.world = world;
 		battleRunning = true;
@@ -58,6 +58,15 @@ public class BattleManager {
 		showingWin = false;
 		showingLoose = false;
 		currentBattle = getBattle(battleIndex);
+		
+		if(currentBattle.secondAttacker != null){
+			currentBattle.secondAttacker.battle = currentBattle;
+			currentBattle.secondAttacker.item = currentBattle.itemToUse;
+			currentBattle.secondAttacker.canShoot = true;
+			currentBattle.secondAttacker.player = player;
+			world.add(currentBattle.secondAttacker);
+		}
+		
 		System.out.println("starting battle #" + currentBattle.number);
 		player.dead = false;
 		Item itemToAdd = currentBattle.itemToUse;
@@ -76,7 +85,11 @@ public class BattleManager {
 		enemy = new EntityEnemy(currentBattle.enemyX, currentBattle.enemyY, currentBattle.enemy, //
 			currentBattle.enemyHealth, new Vector2i(0, 0), currentBattle, player);
 		world.add(enemy);
+		enemy.item = currentBattle.enemyItem;
 		enemy.canShoot = true;
+		if(currentBattle.number >= 14){
+			player.walkingSprite = Assets.midevalPlayer;
+		}
 		player.setHealth(currentBattle.playerHealth);
 		player.x = 30 * 16;
 		player.y = 30 * 16;
@@ -89,11 +102,13 @@ public class BattleManager {
 			if (enemy.isDead()) {
 				win();
 			}
+			if(wonGame){
+				if(beatTick < 10){
+					beatTick = updateCount;
+				}
+			}
 			if (player.isDead()) {
 				loose();
-			}
-			if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
-				if (enemy != null) enemy.kill(world);
 			}
 		} else {
 			if (wonGame) {
@@ -124,6 +139,9 @@ public class BattleManager {
 			enemyHealth.y = enemy.y - world.yOffset - 4;
 			TextMaster.addText(enemyHealth);
 		} else {
+			if(wonGame){
+				TextMaster.addText(timeTaken);
+			}
 			if (showingBriefing) {
 				TextMaster.addText(battleDescription);
 				TextMaster.addText(possibleGold);
@@ -146,7 +164,7 @@ public class BattleManager {
 
 	public static void win() {
 		LevelState.money += getTotalGold();
-		clip.stop();
+		music.stop();
 		battleIndex++;
 		goldPenalty = 1f;
 		player.hasControl = false;
@@ -154,14 +172,24 @@ public class BattleManager {
 		enemy.kill(world);
 		world.removeEntity(enemy);
 		enemy = null;
+		if(currentBattle.secondAttacker != null){
+			currentBattle.secondAttacker.canShoot = false;
+			currentBattle.secondAttacker.kill(world);
+			world.removeEntity(currentBattle.secondAttacker);
+		}
 		showWin();
 	}
 
 	public static void loose() {
-		clip.stop();
+		music.stop();
 		goldPenalty++;
 		die.play();
 		enemy.canShoot = false;
+		if(currentBattle.secondAttacker != null){
+			currentBattle.secondAttacker.canShoot = false;
+			currentBattle.secondAttacker.kill(world);
+			world.removeEntity(currentBattle.secondAttacker);
+		}
 		showLoose();
 	}
 
@@ -174,15 +202,19 @@ public class BattleManager {
 	}
 
 	private static void showBriefing() {
+		if(currentBattle.number >= 14){
+			player.walkingSprite = Assets.midevalPlayer;
+		}
 		currentBattle = getBattle(battleIndex);
 		if (currentBattle == null) return;
 		showingBriefing = true;
 		battleRunning = false;
 		showingWin = false;
 		showingLoose = false;
-
+		
+		world.year = currentBattle.year;
 		possibleGold = new Text("You can get up to " + getTotalGold() + " Gold", Game.screen.width / 2 - 50, 40, 24, Font.BOLD, 0);
-		battleDescription = new Text(currentBattle.description, 0, 60, 20, Font.BOLD, 0);
+		battleDescription = new Text(currentBattle.description, 0, 60, 22, Font.BOLD, 0xA00000);
 		yourItem = new Text("Your item:", Game.screen.width / 2 - 15, 120, 28, Font.BOLD, 0);
 
 	}
@@ -225,7 +257,8 @@ public class BattleManager {
 		BattleManager.player = player;
 		BattleManager.world = world;
 		goldPenalty = 1f;
-		enterToStart = new Text("Press Enter or Shift to move on", Game.screen.width / 2 - 45, Game.screen.height - 18, 20, Font.BOLD, 0);
+		enterToStart = new Text("Press Enter or Shift to move on", Game.screen.width / 2 - 45, Game.screen.height - 18, //
+			20, Font.BOLD, 0x0000A0);
 		player.hasControl = false;
 
 		showBriefing();
@@ -261,6 +294,7 @@ public class BattleManager {
 		wonGame = true;
 		System.out.println("you beat the game!");
 		winGame.play();
+		timeTaken = new Text("You beat the game in " + Game.tickCount + " Ticks! Nice Job!", 50, 75, 30, Font.BOLD, 0);
 
 	}
 

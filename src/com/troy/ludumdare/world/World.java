@@ -223,12 +223,10 @@ public class World {
 
 	}
 	
-	public void hit(int x, int y, int targetX, int targetY, WeaponStats stats, EntityPlayer parent) {
+	public void hit(int x, int y, int targetX, int targetY, WeaponStats stats, EntityLiving parent) {
 		Vector2f hitVector = Vector2f.subtract(new Vector2f(targetX, targetY), new Vector2f(x, y));
-		hitVector.normalised().scale(stats.meleRange);
-		System.out.println("" + hitVector);
+		hitVector.normalised().scale(stats.meleRange / 2);
 		int hitX = Maths.round(x + hitVector.x), hitY = Maths.round(y + hitVector.y);
-		System.out.println("x " + hitX + " y " + hitY); 
 		hitCount.add(new Vector2i(hitX, hitY));
 		for(Entity e : entities){
 			if(e.equals(parent) || e instanceof EntityArrow){

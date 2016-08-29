@@ -7,7 +7,7 @@ import com.troy.troyberry.math.*;
 /** This class represents a living entity witch has health **/
 public abstract class EntityLiving extends Entity {
 	
-	WalkingSprite walkingSprite;
+	public WalkingSprite walkingSprite;
 	public int hitCountDown;
 	
 	/** This entity's health **/

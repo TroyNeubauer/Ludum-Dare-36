@@ -24,7 +24,7 @@ public class TextMaster {
 			g.setColor(new Color(text.color));
 			int stringY = y;
 			String[] lines = text.text.split("\n");
-			if (lines.length > 1) {
+			if (lines.length > 0) {
 				for (int i = 0; i < lines.length; i++) {
 					stringY =  (i * size) + y;
 					g.drawString(lines[i], x, stringY);

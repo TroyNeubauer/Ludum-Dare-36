@@ -11,7 +11,7 @@ import com.troy.ludumdare.world.*;
 
 public class UI {
 
-	private static Text yearText = new Text("Year", 5, 5, 15, Font.BOLD, 0x030303), money = new Text("Money", 35, 5, 15, Font.BOLD, 0x0),
+	private static Text yearText = new Text("Year", 2, 7, 22, Font.BOLD, 0x9B4A3C), money = new Text("Money", 50, 7, 25, Font.BOLD, 0xD80000),
 		healthText = new Text("Health", 100, 5, 15, Font.BOLD, 0);
 
 	private static UIPanel inventoryPanel, battleResultsPanel;
